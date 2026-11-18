@@ -8,6 +8,7 @@ import { validateLinks } from './validation';
 import { snapshot } from './draft';
 import { packEntries, packVersion } from './pack';
 import type { AppState, Entry } from './types';
+import { isDemo } from '../app/demo';
 
 export const CURRENT_COLLECTION = 'word-list';
 interface EnrichmentPatches {
@@ -42,7 +43,8 @@ export function installCurrentCollection(state: AppState, at = Date.now()): bool
     previousSession,
   });
   state.session = null;
-  state.prefs.mode = 'zhOnly';
+  // The public demo opens in English (owner, 2026-11-17); Settings switches to Chinese.
+  state.prefs.mode = isDemo ? 'enOnly' : 'zhOnly';
   ensureTasks(state, 'recognition', at);
   return true;
 }
