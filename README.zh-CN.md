@@ -1,5 +1,7 @@
 # Mottendr
 
+[![CI](https://github.com/beandecode/mottendr/actions/workflows/ci.yml/badge.svg)](https://github.com/beandecode/mottendr/actions/workflows/ci.yml)
+
 **一个本地优先的法语词汇学习应用：先做成网页应用，现在又做成了原生 iPhone 应用。**
 本仓库是它的网页版演示：**300 个最常用的法语词**，词典收前 500 个词，学习流程、统计和离线功能都是完整的。
 

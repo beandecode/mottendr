@@ -1,5 +1,7 @@
 # Mottendr
 
+[![CI](https://github.com/beandecode/mottendr/actions/workflows/ci.yml/badge.svg)](https://github.com/beandecode/mottendr/actions/workflows/ci.yml)
+
 **A local-first French vocabulary app with spaced repetition, built as a web app first and now as a native iPhone app.**
 This repository is the web version in demo form: **300 of the most common French words** and a dictionary of the first
 500, with full study flow, statistics and offline support.
