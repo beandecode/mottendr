@@ -1,4 +1,4 @@
-/* Final logo "M5+" (docs/brand/README.md, chosen 2026-11-06): two cards leaning toward each other so
+/* Final logo "M5+" (chosen 2026-11-06): two cards leaning toward each other so
    their outline traces an M, the front one carrying a serif T. The app is spelled Mottendr (mot +
    tendr); the wordmark shows MoTendr, the silent t of "mot" kept as a faded T trailing the real
    one. public/icon.svg and the PNG icons draw the same cards on the dark green tile. */

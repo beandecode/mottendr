@@ -46,8 +46,7 @@ This repository is the web version in demo form: **300 of the most common French
 - **One schema.** The entry structure is written once in TypeBox and yields the TypeScript types, the validation and a
   JSON Schema.
 - **Tested logic.** The scheduler, session queue, layers, backup and statistics have unit tests on fixed inputs. The same
-  inputs produce golden JSON files that the native Swift port is checked against
-  (`tests/native-fixtures.test.ts`, `native/MottendrCore/Tests/.../Fixtures/`).
+  logic is the specification for the native Swift port (see [the iOS app](docs/ios.md)).
 
 ## Develop
 

@@ -34,7 +34,6 @@ import {
   swipeThreshold,
   useTouchInput,
 } from '../platform/input';
-import { feedback } from '../platform/native';
 import { preview } from '../scheduler';
 import { tagLabel, translator, type Label } from '../i18n';
 import { collectionOf } from '../domain/collections';
@@ -273,8 +272,7 @@ export default function StudyCard({
         attemptAt,
       ),
     );
-    if (ok) feedback();
-    else {
+    if (!ok) {
       submitLock.current = false;
       setRatingLock(false);
       setDeparture(null);

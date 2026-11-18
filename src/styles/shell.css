@@ -342,22 +342,3 @@ main {
     background: var(--bg);
   }
 }
-
-/* The iOS app: a system tab bar (with Settings as a tab) replaces the sidebar, the top bar and the
-   floating tab bar, so pages start at the top (app/nativeChrome.ts sets the attribute). */
-html[data-native-chrome] .sidebar,
-html[data-native-chrome] .topbar,
-html[data-native-chrome] .mobile-nav {
-  display: none !important;
-}
-html[data-native-chrome] .workspace {
-  margin: 0;
-  width: 100%;
-}
-html[data-native-chrome] main {
-  padding-top: calc(30px + var(--sa-t));
-  padding-bottom: calc(32px + var(--sa-b));
-}
-html[data-native-chrome] .toast {
-  bottom: calc(20px + var(--sa-b));
-}

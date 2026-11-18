@@ -17,7 +17,6 @@ import { translator } from '../i18n';
 import type { Mutate } from '../app/types';
 import { useNow } from '../app/useNow';
 import { Empty } from '../app/ui';
-import { usePageChrome } from '../app/nativeChrome';
 
 // How long the width must stay unchanged before the blur lifts.
 const RELAYOUT_SETTLE_MS = 150;
@@ -70,24 +69,6 @@ export default function Study(props: {
     : null;
   const remaining = session.queue.length + session.pending.length,
     total = session.completed + remaining;
-  // In the iOS app these buttons and the progress live in the system's side column.
-  usePageChrome(
-    {
-      toolbar: [
-        { id: 'finish', title: t('finish'), symbol: 'xmark', enabled: !busy },
-        { id: 'undo', title: t('undo'), symbol: 'arrow.uturn.backward', enabled: !busy && canUndo },
-        ...(controls.buttons
-          ? []
-          : [{ id: 'skip', title: t('skip'), symbol: 'forward.end', enabled: !busy }]),
-      ],
-      progress: { done: session.completed, total },
-    },
-    (id) => {
-      if (id === 'finish') finish();
-      else if (id === 'undo') void mutate((d) => undoLast(d, Date.now()));
-      else if (id === 'skip') void mutate((d) => skipTask(d));
-    },
-  );
   // When the window width changes (rotation, resizing), blur the page under a green veil until the
   // width has settled, so the card and its headword re-lay out unseen (StudyCard redraws the
   // letters). Height-only changes, such as browser bars, do not reflow the word.
@@ -165,10 +146,6 @@ export default function Study(props: {
               {t(task.direction === 'recognition' ? 'recognition' : 'production')}
               {continuation.enabled &&
                 ` · ${t('dailyNewProgress')} ${dailyIntroductions}/${state.prefs.newLimit}`}
-              <span className="study-meta-count">
-                {' · '}
-                {session.completed}/{total}
-              </span>
             </p>
           )}
         </div>

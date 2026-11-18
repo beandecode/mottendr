@@ -14,7 +14,6 @@ import type { AppState, LanguageMode, LegacyState, NewWordOrder } from '../domai
 import { ensureTasks } from '../domain/learning';
 import { continuousOptions } from '../domain/study-preferences';
 import { FONT_SCALES } from '../domain/migration';
-import { isNativeIOS } from '../platform/native';
 import { cardControls, useTouchInput } from '../platform/input';
 import type { VoiceInfo } from '../platform/speech';
 import { translator, type Label } from '../i18n';
@@ -39,7 +38,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // Reads the window size and the safe-area insets the device reports, to see how much of a
-// foldable or cover screen the page really gets (see docs/改进工作日志.md, item 109).
+// foldable or cover screen the page really gets.
 function ScreenInfo({ en }: { en: boolean }) {
   const [info, setInfo] = useState('');
   useEffect(() => {
@@ -91,7 +90,6 @@ export default function SettingsPanel({
   voices,
   speak,
   speaking,
-  macAvailable,
   speechDescription,
   openEdit,
   offline,
@@ -100,7 +98,6 @@ export default function SettingsPanel({
   mutate: Mutate;
   busy: boolean;
   voices: VoiceInfo[];
-  macAvailable: boolean;
   speak: (s: string) => void;
   speaking: boolean;
   speechDescription: string;
@@ -398,22 +395,6 @@ export default function SettingsPanel({
           />
         ))}
         <p className="muted">{t('autoSpeechHint')}</p>
-        <label>
-          {t('engine')}
-          <select
-            disabled={busy}
-            value={p.speechEngine === 'mac' && macAvailable ? 'mac' : 'browser'}
-            onChange={(e) =>
-              mutate((d) => {
-                d.prefs.speechEngine = e.target.value as typeof p.speechEngine;
-                d.prefs.voice = '';
-              })
-            }
-          >
-            {!isNativeIOS() && macAvailable && <option value="mac">{t('mac')}</option>}
-            <option value="browser">{t(isNativeIOS() ? 'iosSpeech' : 'browser')}</option>
-          </select>
-        </label>
         <label>
           {t('voice')}
           <select

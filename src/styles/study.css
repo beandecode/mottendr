@@ -647,14 +647,6 @@
   .app-shell[data-view='study'] .gesture-help,
   .app-shell[data-view='study'] .skip-hint {
     display: none;
-  } /* In the iOS app the clipping box reaches the screen edges, so a card being dragged or flying away
-     passes under the camera column instead of vanishing at the safe-area line; the card at rest
-     and every control stay inside the safe area. */
-  html[data-native-chrome] .app-shell[data-view='study'] .study-page {
-    margin-left: calc(-16px - var(--sa-l));
-    margin-right: calc(-16px - var(--sa-r));
-    padding-left: calc(16px + var(--sa-l));
-    padding-right: calc(16px + var(--sa-r));
   }
 }
 
@@ -729,16 +721,4 @@
   .relayout-veil[data-active] {
     opacity: 1;
   }
-}
-
-/* In the iOS app the finish, undo and skip buttons and the progress live in the system's side column
-   (app/nativeChrome.ts, NativeShell.swift); the status line carries the count instead. */
-.study-meta-count {
-  display: none;
-}
-html[data-native-chrome] .study-toolbar {
-  display: none;
-}
-html[data-native-chrome] .study-meta-count {
-  display: inline;
 }

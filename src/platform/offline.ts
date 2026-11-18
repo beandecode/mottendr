@@ -1,5 +1,4 @@
-import { isNativeIOS } from './native';
-export type OfflineStatus = 'checking' | 'ready' | 'unsupported' | 'failed' | 'file' | 'native';
+export type OfflineStatus = 'checking' | 'ready' | 'unsupported' | 'failed' | 'file';
 let status: OfflineStatus = 'checking',
   attempt = 0;
 const listeners = new Set<(value: OfflineStatus) => void>();
@@ -51,10 +50,6 @@ function cacheReady(worker: ServiceWorker): Promise<boolean> {
 }
 export async function registerOffline() {
   const current = ++attempt;
-  if (isNativeIOS()) {
-    publish('native');
-    return;
-  }
   if (location.protocol === 'file:') {
     publish('file');
     return;

@@ -1,12 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState, type CSSProperties } from 'react';
 import {
   BookOpen,
   Home,
@@ -31,7 +23,6 @@ import { EntryEditor } from './components/Lexicon';
 import { BrandMark, Wordmark } from './components/Brand';
 import { ConflictError, dumpLocalDatabase } from './platform/storage';
 import { download } from './app/download';
-import { isNativeIOS } from './platform/native';
 import { speechSource } from './platform/speech';
 import {
   applyOfflineUpdate,
@@ -45,7 +36,6 @@ import type { Modal, View } from './app/types';
 import { storage, useAppState } from './app/useAppState';
 import { useSpeech } from './app/useSpeech';
 import { useNow } from './app/useNow';
-import { PageChromeContext, useNativeChrome, type PageChrome } from './app/nativeChrome';
 import { useContent } from './app/useContent';
 import { Dialog, Empty } from './app/ui';
 import Today from './pages/Today';
@@ -60,10 +50,7 @@ import IssueForm from './pages/IssueForm';
 
 export default function App() {
   const { state, bootError, busy, mutate, notice, setNotice } = useAppState();
-  const { speak, stop, speaking, voices, browserVoices, macAvailable } = useSpeech(
-    state?.prefs,
-    () => setNotice('ttsError'),
-  );
+  const { speak, stop, speaking, voices } = useSpeech(state?.prefs, () => setNotice('ttsError'));
   const [view, setView] = useState<View>('today'),
     [modal, setModal] = useState<Modal>(null);
   const [scope, setScope] = useState(TOP_2000);
@@ -88,20 +75,6 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
     } else setView(target);
   };
-  // In the iOS app the system tab bar replaces the page's own navigation (app/nativeChrome.ts).
-  // Bar items and progress the current page publishes (usePageChrome), and the handler for their taps.
-  const [pageChrome, setPageChrome] = useState<PageChrome | null>(null);
-  const pageAction = useRef<(id: string) => void>(() => {});
-  const publishChrome = useCallback(
-    (chrome: PageChrome | null, onAction?: (id: string) => void) => {
-      setPageChrome(chrome);
-      pageAction.current = onAction ?? (() => {});
-    },
-    [],
-  );
-  const nativeChrome = useNativeChrome(view, !!modal, pageChrome, navigate, (id) =>
-    pageAction.current(id),
-  );
   useEffect(() => {
     document.documentElement.lang = state?.prefs.mode === 'enOnly' ? 'en' : 'zh-CN';
   }, [state?.prefs.mode]);
@@ -180,25 +153,20 @@ export default function App() {
       unsupported: 'offlineUnsupported',
       failed: 'offlineFailed',
       file: 'offlineFile',
-      native: 'offlineNative',
     } as const
   )[offlineStatus];
-  const source = speechSource(state.prefs, isNativeIOS(), macAvailable, browserVoices);
+  const source = speechSource(state.prefs, voices);
   const speechDescription = [
-    t(source.engine === 'ios' ? 'iosSpeech' : source.engine === 'mac' ? 'mac' : 'browser'),
-    ...(source.engine === 'browser'
-      ? [
-          t(
-            source.location === 'device'
-              ? 'deviceVoice'
-              : source.location === 'online'
-                ? 'onlineVoice'
-                : source.location === 'unknown'
-                  ? 'unknownVoice'
-                  : 'noFrenchVoice',
-          ),
-        ]
-      : []),
+    t('browser'),
+    t(
+      source.location === 'device'
+        ? 'deviceVoice'
+        : source.location === 'online'
+          ? 'onlineVoice'
+          : source.location === 'unknown'
+            ? 'unknownVoice'
+            : 'noFrenchVoice',
+    ),
   ].join(' · ');
   async function start(direction: Direction) {
     if (await mutate((d) => beginSession(d, direction, Date.now(), scope))) setView('study');
@@ -254,7 +222,6 @@ export default function App() {
   const settingsPanel = (
     <SettingsPanel
       speechDescription={speechDescription}
-      macAvailable={macAvailable}
       state={state}
       mutate={mutate}
       busy={busy}
@@ -270,7 +237,7 @@ export default function App() {
     />
   );
   return (
-    <PageChromeContext.Provider value={publishChrome}>
+    <>
       <div className="app-shell" data-view={view} inert={!!modal}>
         <aside className="sidebar">
           <a
@@ -371,9 +338,7 @@ export default function App() {
                   dueCount={dueCount}
                   start={start}
                   resume={() => setView('study')}
-                  openSettings={() =>
-                    nativeChrome ? setView('settings') : setModal({ type: 'settings' })
-                  }
+                  openSettings={() => setModal({ type: 'settings' })}
                   openDictionary={() => setView('dictionary')}
                   openLibrary={() => setView('library')}
                 />
@@ -414,7 +379,7 @@ export default function App() {
                   speak={speak}
                   autoSpeak={(word) => void speak(word, 'fr-FR', true)}
                   blocked={!!modal}
-                  speechReady={source.engine !== 'browser' || source.location !== 'unavailable'}
+                  speechReady={source.location !== 'unavailable'}
                   speaking={speaking}
                   finish={async () => {
                     if (
@@ -620,6 +585,6 @@ export default function App() {
           </button>
         </div>
       )}
-    </PageChromeContext.Provider>
+    </>
   );
 }

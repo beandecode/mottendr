@@ -103,34 +103,26 @@ describe('card input capabilities and directional regions', () => {
   });
 });
 
-describe('speech source describes the actual provider and selected voice', () => {
+describe('speech source describes the selected browser voice', () => {
   const prefs = { ...initialState().prefs, speechEngine: 'browser' as const, voice: '' };
   const voices = [
     { name: 'Thomas', lang: 'fr-FR', localService: true },
     { name: 'Online French', lang: 'fr-CA', localService: false },
   ];
-  it('keeps browser device voices distinct from direct system speech', () => {
-    expect(speechSource(prefs, false, true, voices)).toEqual({
+  it('reports where the browser voice runs', () => {
+    expect(speechSource(prefs, voices)).toEqual({
       engine: 'browser',
       location: 'device',
     });
-    expect(speechSource({ ...prefs, voice: 'Online French' }, false, false, voices).location).toBe(
-      'online',
-    );
-    expect(speechSource(prefs, false, false, [{ name: 'French', lang: 'fr' }]).location).toBe(
-      'unknown',
-    );
-    expect(speechSource(prefs, false, false, [])).toEqual({
+    expect(speechSource({ ...prefs, voice: 'Online French' }, voices).location).toBe('online');
+    expect(speechSource(prefs, [{ name: 'French', lang: 'fr' }]).location).toBe('unknown');
+    expect(speechSource(prefs, [])).toEqual({
       engine: 'browser',
       location: 'unavailable',
     });
   });
-  it('reports Mac/iOS system speech and correctly falls back when the Mac service is absent', () => {
-    expect(speechSource({ ...prefs, speechEngine: 'mac' }, false, true, voices).engine).toBe('mac');
-    expect(speechSource({ ...prefs, speechEngine: 'mac' }, false, false, voices).engine).toBe(
-      'browser',
-    );
-    expect(speechSource(prefs, true, false, voices).engine).toBe('ios');
+  it('treats a stored Mac engine choice as the browser voice', () => {
+    expect(speechSource({ ...prefs, speechEngine: 'mac' }, voices).engine).toBe('browser');
   });
   it('uses the same case-insensitive voice resolution for playback and provenance', () => {
     expect(selectVoice(voices, 'Online French')?.name).toBe('Online French');

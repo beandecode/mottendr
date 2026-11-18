@@ -1,6 +1,6 @@
 /* Design tokens. Direction A "墨绿玻璃" (chosen 2026-10-17): translucent layers over a deep
    green glow. Every color, radius, type size and easing used by the other style files lives here,
-   so a future skin (see docs/待办与后续计划.md) is mostly a different set of these values. */
+   so a future skin is mostly a different set of these values. */
 :root {
   /* Set from Settings by App.tsx: 1.725 × the chosen text size (typography v3). */
   --ui-font-scale: 1.725;

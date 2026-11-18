@@ -11,7 +11,7 @@ import {
 import { validateEntry } from '../domain/validation';
 import type { Entry } from '../domain/types';
 
-// Learner feedback from a full backup (docs/内容复核计划.md): the problems flagged while
+// Learner feedback from a full backup: the problems flagged while
 // studying and the learner's own edits to built-in entries. readFeedback only reports;
 // adoptEdits folds chosen edits into the pack, refusing any the pack has changed since.
 

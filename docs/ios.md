@@ -39,10 +39,10 @@ the backup format stayed as they were.
 
 ## How parity with the web app is proven
 
-The logic of the web version is the reference, and it is public in this repository. `tests/native-fixtures.test.ts`
+The logic of the web version is the reference, and it is public in this repository. A test in the private repository
 runs it on fixed inputs (pinned time zone, random source, clock and a small synthetic word pack) and writes golden JSON
-files (`native/MottendrCore/Tests/MottendrCoreTests/Fixtures/`). The Swift package must reproduce every case; the web
-tests fail if the logic changes without the files being regenerated, so the two sides cannot drift apart unnoticed.
+files; the Swift package must reproduce every case, and the web tests fail if the logic changes without the files being
+regenerated, so the two sides cannot drift apart unnoticed. The parity suite is shown together with the native source.
 
 Results recorded during the port:
 

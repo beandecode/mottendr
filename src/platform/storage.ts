@@ -5,7 +5,6 @@ import { packEntries } from '../domain/pack';
 import { resolveEntry, splitEntry } from '../domain/layers';
 import { assembleLayer, metaOf, type Meta } from '../domain/user-data';
 import type { Annotation, ContentLogRecord, ContentPatchDoc, Issue } from '../domain/user-layer';
-import { isNativeIOS, native, type NativeBridge, type NativeOp } from './native';
 export class ConflictError extends Error {
   constructor() {
     super('DATA_CHANGED');
@@ -378,131 +377,14 @@ export class IndexedDbStorage implements StorageProvider {
   }
 }
 
-// The iOS store: the same layout as IndexedDbStorage, kept as records in SQLite. The layering,
-// change detection and backups are the shared code above; the Swift side only stores records and
-// applies one commit at a time.
-type NativeAll = {
-  meta: { current: Meta | null; entryOrder: string[] | null };
-} & Record<ListName | 'contentPatches' | 'annotations' | 'userEntries', unknown[]>;
-const rawOf = (all: NativeAll): Raw => ({
-  meta: all.meta.current ?? undefined,
-  order: all.meta.entryOrder ?? undefined,
-  tasks: all.tasks as Raw['tasks'],
-  events: all.events as Raw['events'],
-  issues: all.issues as Raw['issues'],
-  contentLog: all.contentLog as Raw['contentLog'],
-  patches: all.contentPatches as Raw['patches'],
-  annotations: all.annotations as Raw['annotations'],
-  userEntries: all.userEntries as Raw['userEntries'],
-  prerelease: [],
-});
-type NativeAccess = Pick<NativeBridge, 'readAll' | 'readHead' | 'readKey' | 'commit'>;
-export class NativeStorage implements StorageProvider {
-  needsFullSave = false;
-  // What the last read or save left in the store, so a rating does not read the entry order again.
-  private head?: { meta: Meta | null; orderLength: number | null };
-  constructor(
-    private bridge: NativeAccess = native,
-    private pack: ReadonlyMap<string, Entry> = packEntries(),
-  ) {}
-  private async readRaw() {
-    return rawOf(JSON.parse((await this.bridge.readAll()).json));
-  }
-  async read(): Promise<AppState | LegacyState | null> {
-    const raw = await this.readRaw();
-    const { value, stale } = assemble(raw, this.pack);
-    this.needsFullSave = stale;
-    this.head = { meta: raw.meta ?? null, orderLength: raw.order?.length ?? null };
-    return value;
-  }
-  private async readKey<T>(key: string): Promise<T | null> {
-    const { json } = await this.bridge.readKey({ store: 'state', key });
-    return json === null ? null : JSON.parse(json);
-  }
-  readMigrationBackup() {
-    return this.readKey<LegacyState>('before-schema-2');
-  }
-  async readContentBackup() {
-    return (
-      (await this.readKey<AppState>('before-word-list-definitions')) ??
-      (await this.readKey<AppState>('before-word-list-v2'))
-    );
-  }
-  readStorageSplitBackup() {
-    return this.readKey<AppState | LegacyState>('before-storage-split');
-  }
-  readRestoreBackup() {
-    return this.readKey<AppState>('before-restore');
-  }
-  async save(
-    state: AppState,
-    expectedRevision: number | null,
-    changes?: StateChanges,
-    backupAs?: string,
-  ): Promise<AppState> {
-    if (!this.head) {
-      const { current, entryOrder } = JSON.parse((await this.bridge.readHead()).json) as {
-        current: Meta | null;
-        entryOrder: string[] | null;
-      };
-      this.head = { meta: current, orderLength: entryOrder?.length ?? null };
-    }
-    const { meta, orderLength } = this.head,
-      revision = meta?.revision ?? null;
-    if (revision !== expectedRevision) throw new ConflictError();
-    const incremental = !!changes && !!meta && orderLength !== null;
-    const result: AppState = {
-      ...(incremental ? state : structuredClone(state)),
-      revision: (revision ?? 0) + 1,
-    };
-    const ops: NativeOp[] = [];
-    const writer: RecordWriter = {
-      put: (store, value, key) => {
-        ops.push({ op: 'put', store, key, json: JSON.stringify(value) });
-      },
-      delete: (store, key) => {
-        ops.push({ op: 'delete', store, key });
-      },
-      clear: (store) => {
-        ops.push({ op: 'clear', store });
-      },
-    };
-    const keys = meta ? collectionBackups(meta, result) : [];
-    if (meta && backupAs) keys.push(backupAs);
-    if (keys.length) {
-      // Rare: a content upgrade or a restore keeps the complete previous state as a backup.
-      const previous = assemble(await this.readRaw(), this.pack).value;
-      for (const key of keys) writer.put('state', previous, key);
-    }
-    writeLayers(
-      writer,
-      this.pack,
-      result,
-      incremental ? changes! : fullRewrite,
-      orderLength ?? undefined,
-      false,
-    );
-    try {
-      await this.bridge.commit({ expectedRevision, ops });
-    } catch (e) {
-      if ((e as { code?: string }).code === 'CONFLICT') throw new ConflictError();
-      throw e;
-    }
-    this.head = { meta: metaOf(result), orderLength: result.entries.length };
-    if (!incremental) this.needsFullSave = false;
-    return result;
-  }
-}
-
-// IndexedDB on the web, the native store on iOS. A page opened from a file where
+// IndexedDB in the browser. A page opened from a file where
 // IndexedDB is unavailable runs in memory and says so; HTTP storage errors stay visible.
 export class PortableStorage implements StorageProvider {
-  private chosen?: IndexedDbStorage | NativeStorage | 'memory';
+  private chosen?: IndexedDbStorage | 'memory';
   private memory: AppState | LegacyState | null = null;
   persistence: 'persistent' | 'memory' = 'persistent';
   private async select() {
     if (this.chosen) return this.chosen;
-    if (isNativeIOS()) return (this.chosen = new NativeStorage());
     const indexed = new IndexedDbStorage();
     try {
       await indexed.read();

@@ -591,20 +591,3 @@
     padding: 6px 12px;
   }
 }
-
-/* The iOS app has no top bar, so the sticky search and letter headings stick to the top edge. */
-html[data-native-chrome] .sticky-search {
-  top: var(--sa-t);
-}
-html[data-native-chrome] .letter-head {
-  top: calc(66px + var(--sa-t));
-  scroll-margin-top: calc(66px + var(--sa-t));
-}
-/* In the iOS app the side inset ends the row, so it stops at the same edge as the search field and the
-   list, and fades out there to show that more filters scroll in. */
-html[data-native-chrome] .chip-row {
-  margin-right: 0;
-  padding-right: 28px;
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
-}

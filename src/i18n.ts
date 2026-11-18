@@ -7,7 +7,6 @@ import { isDemo } from './app/demo';
 //   technical terms (speech APIs, task counters) outside Settings.
 export const labels = {
   localEdition: ['离线学习', 'Offline learning'],
-  iosSpeech: ['iPhone 系统语音', 'iPhone system voices'],
   updateApp: ['更新应用', 'Update app'],
   exportError: [
     '导出未完成，请使用“查看备份 JSON”保留数据。',
@@ -388,16 +387,14 @@ export const labels = {
     'Changes affect future ratings, without rewriting saved due dates.',
   ],
   speech: ['朗读', 'Speech'],
-  engine: ['语音来源', 'Speech source'],
-  mac: ['Mac 系统语音', 'Mac system voices'],
   browser: ['浏览器语音接口', 'Browser speech API'],
   voice: ['法语声音', 'French voice'],
   rate: ['语速', 'Speaking rate'],
   testSpeech: ['试听 Bonjour', 'Try Bonjour'],
   unavailable: ['此语音来源当前不可用', 'This speech source is unavailable'],
   speechHint: [
-    '浏览器接口可能使用本机或在线声音；直接系统朗读由 Mac 本地服务或 iOS 原生版本提供。法语始终使用法语声音。',
-    'The browser API may use device or online voices. Direct system speech uses the Mac local service or native iOS app. French uses French voices.',
+    '朗读使用浏览器提供的声音，可能是本机声音，也可能是在线声音。法语始终使用法语声音。',
+    "Speech uses the browser's voices, which may run on the device or online. French uses French voices.",
   ],
   currentSpeech: ['当前朗读来源', 'Current speech source'],
   deviceVoice: ['本机声音', 'Device voice'],
@@ -546,7 +543,6 @@ export const labels = {
   ],
   offlineRetry: ['重新准备', 'Retry preparation'],
   offlineFile: ['本地单文件版', 'Local standalone file'],
-  offlineNative: ['应用资源已内置', 'App resources included'],
 } as const;
 export type Label = keyof typeof labels;
 export function translator(mode: LanguageMode) {

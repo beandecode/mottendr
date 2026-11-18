@@ -54,7 +54,7 @@ export let dictionaryConflicts: unknown = [];
 export const lookupKey = (s: string) =>
   s.normalize('NFC').trim().toLocaleLowerCase('fr').replace(/['’]/g, '’');
 // The text dictionary search compares: accents removed, French lower case, one apostrophe. Shared with the
-// native content build (scripts/native-content.mjs), so both searches fold alike.
+// native app's content build, so both searches fold alike.
 export const searchFold = (s: string) =>
   s.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase('fr').replace(/['’]/g, '’');
 let index = new Map<string, DictionaryRecord>(),
