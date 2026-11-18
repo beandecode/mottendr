@@ -1,0 +1,1742 @@
+{
+  "schema": 1,
+  "source": "src/scheduler/index.ts",
+  "tz": "Europe/Paris",
+  "compare": {
+    "parsedValues": "compare parsed JSON values, not bytes (the Foundation encoder writes 1e-07 where JS writes 1e-7)",
+    "exact": "integers, timestamps, state, due, reps, lapses, ids, queues, strings",
+    "tolerance": "stability and difficulty: absolute 1e-8 (ts-fsrs rounds with Math.round(x * 1e8) / 1e8); recall: relative 1e-12",
+    "absentKeys": "a missing key is not null (for example last_review on a new card)",
+    "structural": "compare previews and states structurally, never through JSON.stringify (key order)"
+  },
+  "cases": [
+    {
+      "name": "steady good",
+      "input": {
+        "retention": 0.9,
+        "start": 1793088000000,
+        "startCard": {
+          "due": 1793088000000,
+          "stability": 0,
+          "difficulty": 0,
+          "elapsed_days": 0,
+          "scheduled_days": 0,
+          "reps": 0,
+          "lapses": 0,
+          "learning_steps": 0,
+          "state": 0
+        },
+        "ratings": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "at": 1793088000000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793088060000,
+                "stability": 0.212,
+                "difficulty": 6.4133,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "2": {
+                "due": 1793088360000,
+                "stability": 1.2931,
+                "difficulty": 5.11217071,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "3": {
+                "due": 1793088600000,
+                "stability": 2.3065,
+                "difficulty": 2.11810397,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "4": {
+                "due": 1793779200000,
+                "stability": 8.2956,
+                "difficulty": 1,
+                "elapsed_days": 0,
+                "scheduled_days": 8,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088000000
+              }
+            },
+            "card": {
+              "due": 1793088600000,
+              "stability": 2.3065,
+              "difficulty": 2.11810397,
+              "elapsed_days": 0,
+              "scheduled_days": 0,
+              "reps": 1,
+              "lapses": 0,
+              "learning_steps": 1,
+              "state": 1,
+              "last_review": 1793088000000
+            },
+            "recallBefore": null
+          },
+          {
+            "at": 1793088600000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793088660000,
+                "stability": 0.77508398,
+                "difficulty": 7.39450274,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088600000
+              },
+              "2": {
+                "due": 1793088960000,
+                "stability": 2.3065,
+                "difficulty": 4.75285849,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088600000
+              },
+              "3": {
+                "due": 1793261400000,
+                "stability": 2.3065,
+                "difficulty": 2.11121424,
+                "elapsed_days": 0,
+                "scheduled_days": 2,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088600000
+              },
+              "4": {
+                "due": 1793434200000,
+                "stability": 3.94605407,
+                "difficulty": 1,
+                "elapsed_days": 0,
+                "scheduled_days": 4,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088600000
+              }
+            },
+            "card": {
+              "due": 1793261400000,
+              "stability": 2.3065,
+              "difficulty": 2.11121424,
+              "elapsed_days": 0,
+              "scheduled_days": 2,
+              "reps": 2,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793088600000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793261400000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793262000000,
+                "stability": 0.60770166,
+                "difficulty": 7.39223814,
+                "elapsed_days": 2,
+                "scheduled_days": 0,
+                "reps": 3,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1793261400000
+              },
+              "2": {
+                "due": 1793952600000,
+                "stability": 7.51735908,
+                "difficulty": 4.74828477,
+                "elapsed_days": 2,
+                "scheduled_days": 8,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793261400000
+              },
+              "3": {
+                "due": 1794211800000,
+                "stability": 10.97104786,
+                "difficulty": 2.1043314,
+                "elapsed_days": 2,
+                "scheduled_days": 11,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793261400000
+              },
+              "4": {
+                "due": 1794903000000,
+                "stability": 18.53433169,
+                "difficulty": 1,
+                "elapsed_days": 2,
+                "scheduled_days": 19,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793261400000
+              }
+            },
+            "card": {
+              "due": 1794211800000,
+              "stability": 10.97104786,
+              "difficulty": 2.1043314,
+              "elapsed_days": 2,
+              "scheduled_days": 11,
+              "reps": 3,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793261400000
+            },
+            "recallBefore": 0.90949326
+          },
+          {
+            "at": 1794211800000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1794212400000,
+                "stability": 1.5390125,
+                "difficulty": 7.38997579,
+                "elapsed_days": 11,
+                "scheduled_days": 0,
+                "reps": 4,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1794211800000
+              },
+              "2": {
+                "due": 1796976600000,
+                "stability": 32.22801722,
+                "difficulty": 4.74371562,
+                "elapsed_days": 11,
+                "scheduled_days": 32,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1794211800000
+              },
+              "3": {
+                "due": 1798186200000,
+                "stability": 46.31685657,
+                "difficulty": 2.09745544,
+                "elapsed_days": 11,
+                "scheduled_days": 46,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1794211800000
+              },
+              "4": {
+                "due": 1800864600000,
+                "stability": 77.170213,
+                "difficulty": 1,
+                "elapsed_days": 11,
+                "scheduled_days": 77,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1794211800000
+              }
+            },
+            "card": {
+              "due": 1798186200000,
+              "stability": 46.31685657,
+              "difficulty": 2.09745544,
+              "elapsed_days": 11,
+              "scheduled_days": 46,
+              "reps": 4,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1794211800000
+            },
+            "recallBefore": 0.89981884
+          },
+          {
+            "at": 1798186200000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1798186800000,
+                "stability": 2.93384526,
+                "difficulty": 7.38771571,
+                "elapsed_days": 46,
+                "scheduled_days": 0,
+                "reps": 5,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1798186200000
+              },
+              "2": {
+                "due": 1808208600000,
+                "stability": 116.48998752,
+                "difficulty": 4.73915103,
+                "elapsed_days": 46,
+                "scheduled_days": 116,
+                "reps": 5,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1798186200000
+              },
+              "3": {
+                "due": 1812269400000,
+                "stability": 162.99981459,
+                "difficulty": 2.09058635,
+                "elapsed_days": 46,
+                "scheduled_days": 163,
+                "reps": 5,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1798186200000
+              },
+              "4": {
+                "due": 1821082200000,
+                "stability": 264.85236864,
+                "difficulty": 1,
+                "elapsed_days": 46,
+                "scheduled_days": 265,
+                "reps": 5,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1798186200000
+              }
+            },
+            "card": {
+              "due": 1812269400000,
+              "stability": 162.99981459,
+              "difficulty": 2.09058635,
+              "elapsed_days": 46,
+              "scheduled_days": 163,
+              "reps": 5,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1798186200000
+            },
+            "recallBefore": 0.90047091
+          }
+        ],
+        "recallLater": [
+          {
+            "at": 1812355800000,
+            "value": 0.89957918
+          },
+          {
+            "at": 1812874200000,
+            "value": 0.89708521
+          },
+          {
+            "at": 1814861400000,
+            "value": 0.88797975
+          }
+        ],
+        "schedulerVersion": "ts-fsrs@5.4.2; FSRS-6",
+        "parameters": {
+          "request_retention": 0.9,
+          "maximum_interval": 36500,
+          "w": [
+            0.212,
+            1.2931,
+            2.3065,
+            8.2956,
+            6.4133,
+            0.8334,
+            3.0194,
+            0.001,
+            1.8722,
+            0.1666,
+            0.796,
+            1.4835,
+            0.0614,
+            0.2629,
+            1.6483,
+            0.6014,
+            1.8729,
+            0.5425,
+            0.0912,
+            0.0658,
+            0.1542
+          ],
+          "enable_fuzz": false,
+          "enable_short_term": true,
+          "learning_steps": [
+            "1m",
+            "10m"
+          ],
+          "relearning_steps": [
+            "10m"
+          ]
+        }
+      }
+    },
+    {
+      "name": "lapse then recovery",
+      "input": {
+        "retention": 0.9,
+        "start": 1793088000000,
+        "startCard": {
+          "due": 1793088000000,
+          "stability": 0,
+          "difficulty": 0,
+          "elapsed_days": 0,
+          "scheduled_days": 0,
+          "reps": 0,
+          "lapses": 0,
+          "learning_steps": 0,
+          "state": 0
+        },
+        "ratings": [
+          1,
+          3,
+          4,
+          1,
+          3,
+          3
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "at": 1793088000000,
+            "rating": 1,
+            "previews": {
+              "1": {
+                "due": 1793088060000,
+                "stability": 0.212,
+                "difficulty": 6.4133,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "2": {
+                "due": 1793088360000,
+                "stability": 1.2931,
+                "difficulty": 5.11217071,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "3": {
+                "due": 1793088600000,
+                "stability": 2.3065,
+                "difficulty": 2.11810397,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "4": {
+                "due": 1793779200000,
+                "stability": 8.2956,
+                "difficulty": 1,
+                "elapsed_days": 0,
+                "scheduled_days": 8,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088000000
+              }
+            },
+            "card": {
+              "due": 1793088060000,
+              "stability": 0.212,
+              "difficulty": 6.4133,
+              "elapsed_days": 0,
+              "scheduled_days": 0,
+              "reps": 1,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 1,
+              "last_review": 1793088000000
+            },
+            "recallBefore": null
+          },
+          {
+            "at": 1793088060000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793088120000,
+                "stability": 0.08335672,
+                "difficulty": 8.80630447,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088060000
+              },
+              "2": {
+                "due": 1793088420000,
+                "stability": 0.212,
+                "difficulty": 7.60420977,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088060000
+              },
+              "3": {
+                "due": 1793088660000,
+                "stability": 0.24668919,
+                "difficulty": 6.40211507,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088060000
+              },
+              "4": {
+                "due": 1793174460000,
+                "stability": 0.42437996,
+                "difficulty": 5.20002037,
+                "elapsed_days": 0,
+                "scheduled_days": 1,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088060000
+              }
+            },
+            "card": {
+              "due": 1793088660000,
+              "stability": 0.24668919,
+              "difficulty": 6.40211507,
+              "elapsed_days": 0,
+              "scheduled_days": 0,
+              "reps": 2,
+              "lapses": 0,
+              "learning_steps": 1,
+              "state": 1,
+              "last_review": 1793088060000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793088660000,
+            "rating": 4,
+            "previews": {
+              "1": {
+                "due": 1793088720000,
+                "stability": 0.09603384,
+                "difficulty": 8.80262806,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088660000
+              },
+              "2": {
+                "due": 1793089020000,
+                "stability": 0.24668919,
+                "difficulty": 7.59678469,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088660000
+              },
+              "3": {
+                "due": 1793175060000,
+                "stability": 0.28420636,
+                "difficulty": 6.39094132,
+                "elapsed_days": 0,
+                "scheduled_days": 1,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088660000
+              },
+              "4": {
+                "due": 1793175060000,
+                "stability": 0.48892084,
+                "difficulty": 5.18509795,
+                "elapsed_days": 0,
+                "scheduled_days": 1,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088660000
+              }
+            },
+            "card": {
+              "due": 1793175060000,
+              "stability": 0.48892084,
+              "difficulty": 5.18509795,
+              "elapsed_days": 0,
+              "scheduled_days": 1,
+              "reps": 3,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793088660000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793175060000,
+            "rating": 1,
+            "previews": {
+              "1": {
+                "due": 1793175660000,
+                "stability": 0.19132241,
+                "difficulty": 8.40260281,
+                "elapsed_days": 1,
+                "scheduled_days": 0,
+                "reps": 4,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1793175060000
+              },
+              "2": {
+                "due": 1793347860000,
+                "stability": 2.14564506,
+                "difficulty": 6.78887202,
+                "elapsed_days": 1,
+                "scheduled_days": 2,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793175060000
+              },
+              "3": {
+                "due": 1793434260000,
+                "stability": 3.24370005,
+                "difficulty": 5.17514122,
+                "elapsed_days": 1,
+                "scheduled_days": 3,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793175060000
+              },
+              "4": {
+                "due": 1793693460000,
+                "stability": 5.64834682,
+                "difficulty": 3.56141043,
+                "elapsed_days": 1,
+                "scheduled_days": 6,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793175060000
+              }
+            },
+            "card": {
+              "due": 1793175660000,
+              "stability": 0.19132241,
+              "difficulty": 8.40260281,
+              "elapsed_days": 1,
+              "scheduled_days": 0,
+              "reps": 4,
+              "lapses": 1,
+              "learning_steps": 0,
+              "state": 3,
+              "last_review": 1793175060000
+            },
+            "recallBefore": 0.84394401
+          },
+          {
+            "at": 1793175660000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793176260000,
+                "stability": 0.07573616,
+                "difficulty": 9.46017478,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 5,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1793175660000
+              },
+              "2": {
+                "due": 1793176560000,
+                "stability": 0.19132241,
+                "difficulty": 8.92480168,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 5,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1793175660000
+              },
+              "3": {
+                "due": 1793262060000,
+                "stability": 0.22413661,
+                "difficulty": 8.38942858,
+                "elapsed_days": 0,
+                "scheduled_days": 1,
+                "reps": 5,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793175660000
+              },
+              "4": {
+                "due": 1793262060000,
+                "stability": 0.38558272,
+                "difficulty": 7.85405548,
+                "elapsed_days": 0,
+                "scheduled_days": 1,
+                "reps": 5,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793175660000
+              }
+            },
+            "card": {
+              "due": 1793262060000,
+              "stability": 0.22413661,
+              "difficulty": 8.38942858,
+              "elapsed_days": 0,
+              "scheduled_days": 1,
+              "reps": 5,
+              "lapses": 1,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793175660000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793262060000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793262660000,
+                "stability": 0.10359011,
+                "difficulty": 9.45584449,
+                "elapsed_days": 1,
+                "scheduled_days": 0,
+                "reps": 6,
+                "lapses": 2,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1793262060000
+              },
+              "2": {
+                "due": 1793348460000,
+                "stability": 0.80946293,
+                "difficulty": 8.91605601,
+                "elapsed_days": 1,
+                "scheduled_days": 1,
+                "reps": 6,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793262060000
+              },
+              "3": {
+                "due": 1793434860000,
+                "stability": 1.19740951,
+                "difficulty": 8.37626752,
+                "elapsed_days": 1,
+                "scheduled_days": 2,
+                "reps": 6,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793262060000
+              },
+              "4": {
+                "due": 1793521260000,
+                "stability": 2.04697942,
+                "difficulty": 7.83647903,
+                "elapsed_days": 1,
+                "scheduled_days": 3,
+                "reps": 6,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793262060000
+              }
+            },
+            "card": {
+              "due": 1793434860000,
+              "stability": 1.19740951,
+              "difficulty": 8.37626752,
+              "elapsed_days": 1,
+              "scheduled_days": 2,
+              "reps": 6,
+              "lapses": 1,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793262060000
+            },
+            "recallBefore": 0.77159535
+          }
+        ],
+        "recallLater": [
+          {
+            "at": 1793521260000,
+            "value": 0.82594032
+          },
+          {
+            "at": 1794039660000,
+            "value": 0.72065548
+          },
+          {
+            "at": 1796026860000,
+            "value": 0.60088535
+          }
+        ],
+        "schedulerVersion": "ts-fsrs@5.4.2; FSRS-6",
+        "parameters": {
+          "request_retention": 0.9,
+          "maximum_interval": 36500,
+          "w": [
+            0.212,
+            1.2931,
+            2.3065,
+            8.2956,
+            6.4133,
+            0.8334,
+            3.0194,
+            0.001,
+            1.8722,
+            0.1666,
+            0.796,
+            1.4835,
+            0.0614,
+            0.2629,
+            1.6483,
+            0.6014,
+            1.8729,
+            0.5425,
+            0.0912,
+            0.0658,
+            0.1542
+          ],
+          "enable_fuzz": false,
+          "enable_short_term": true,
+          "learning_steps": [
+            "1m",
+            "10m"
+          ],
+          "relearning_steps": [
+            "10m"
+          ]
+        }
+      }
+    },
+    {
+      "name": "hard and good mix",
+      "input": {
+        "retention": 0.85,
+        "start": 1793088000000,
+        "startCard": {
+          "due": 1793088000000,
+          "stability": 0,
+          "difficulty": 0,
+          "elapsed_days": 0,
+          "scheduled_days": 0,
+          "reps": 0,
+          "lapses": 0,
+          "learning_steps": 0,
+          "state": 0
+        },
+        "ratings": [
+          2,
+          2,
+          3,
+          1,
+          4,
+          3
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "at": 1793088000000,
+            "rating": 2,
+            "previews": {
+              "1": {
+                "due": 1793088060000,
+                "stability": 0.212,
+                "difficulty": 6.4133,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "2": {
+                "due": 1793088360000,
+                "stability": 1.2931,
+                "difficulty": 5.11217071,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "3": {
+                "due": 1793088600000,
+                "stability": 2.3065,
+                "difficulty": 2.11810397,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "4": {
+                "due": 1794470400000,
+                "stability": 8.2956,
+                "difficulty": 1,
+                "elapsed_days": 0,
+                "scheduled_days": 16,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088000000
+              }
+            },
+            "card": {
+              "due": 1793088360000,
+              "stability": 1.2931,
+              "difficulty": 5.11217071,
+              "elapsed_days": 0,
+              "scheduled_days": 0,
+              "reps": 1,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 1,
+              "last_review": 1793088000000
+            },
+            "recallBefore": null
+          },
+          {
+            "at": 1793088360000,
+            "rating": 2,
+            "previews": {
+              "1": {
+                "due": 1793088420000,
+                "stability": 0.45140292,
+                "difficulty": 8.37863212,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088360000
+              },
+              "2": {
+                "due": 1793088720000,
+                "stability": 1.2931,
+                "difficulty": 6.74045952,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088360000
+              },
+              "3": {
+                "due": 1793088960000,
+                "stability": 1.33589976,
+                "difficulty": 5.10228691,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088360000
+              },
+              "4": {
+                "due": 1793433960000,
+                "stability": 2.29815136,
+                "difficulty": 3.4641143,
+                "elapsed_days": 0,
+                "scheduled_days": 4,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088360000
+              }
+            },
+            "card": {
+              "due": 1793088720000,
+              "stability": 1.2931,
+              "difficulty": 6.74045952,
+              "elapsed_days": 0,
+              "scheduled_days": 0,
+              "reps": 2,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 1,
+              "last_review": 1793088360000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793088720000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793088780000,
+                "stability": 0.45140292,
+                "difficulty": 8.91383958,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088720000
+              },
+              "2": {
+                "due": 1793089080000,
+                "stability": 1.2931,
+                "difficulty": 7.8213935,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088720000
+              },
+              "3": {
+                "due": 1793089320000,
+                "stability": 1.33589976,
+                "difficulty": 6.72894743,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088720000
+              },
+              "4": {
+                "due": 1793434320000,
+                "stability": 2.29815136,
+                "difficulty": 5.63650136,
+                "elapsed_days": 0,
+                "scheduled_days": 4,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088720000
+              }
+            },
+            "card": {
+              "due": 1793089320000,
+              "stability": 1.33589976,
+              "difficulty": 6.72894743,
+              "elapsed_days": 0,
+              "scheduled_days": 0,
+              "reps": 3,
+              "lapses": 0,
+              "learning_steps": 1,
+              "state": 1,
+              "last_review": 1793088720000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793089320000,
+            "rating": 1,
+            "previews": {
+              "1": {
+                "due": 1793089380000,
+                "stability": 0.46534558,
+                "difficulty": 8.91005563,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793089320000
+              },
+              "2": {
+                "due": 1793089680000,
+                "stability": 1.33589976,
+                "difficulty": 7.81375124,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793089320000
+              },
+              "3": {
+                "due": 1793348520000,
+                "stability": 1.37716224,
+                "difficulty": 6.71744685,
+                "elapsed_days": 0,
+                "scheduled_days": 3,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793089320000
+              },
+              "4": {
+                "due": 1793521320000,
+                "stability": 2.36913529,
+                "difficulty": 5.62114246,
+                "elapsed_days": 0,
+                "scheduled_days": 5,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793089320000
+              }
+            },
+            "card": {
+              "due": 1793089380000,
+              "stability": 0.46534558,
+              "difficulty": 8.91005563,
+              "elapsed_days": 0,
+              "scheduled_days": 0,
+              "reps": 4,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 1,
+              "last_review": 1793089320000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793089380000,
+            "rating": 4,
+            "previews": {
+              "1": {
+                "due": 1793089440000,
+                "stability": 0.17374551,
+                "difficulty": 9.62697107,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 5,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793089380000
+              },
+              "2": {
+                "due": 1793089740000,
+                "stability": 0.46534558,
+                "difficulty": 9.26167251,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 5,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793089380000
+              },
+              "3": {
+                "due": 1793089980000,
+                "stability": 0.51418939,
+                "difficulty": 8.89637394,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 5,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793089380000
+              },
+              "4": {
+                "due": 1793262180000,
+                "stability": 0.88456117,
+                "difficulty": 8.53107538,
+                "elapsed_days": 0,
+                "scheduled_days": 2,
+                "reps": 5,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793089380000
+              }
+            },
+            "card": {
+              "due": 1793262180000,
+              "stability": 0.88456117,
+              "difficulty": 8.53107538,
+              "elapsed_days": 0,
+              "scheduled_days": 2,
+              "reps": 5,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793089380000
+            },
+            "recallBefore": 1
+          },
+          {
+            "at": 1793262180000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1793262780000,
+                "stability": 0.30937626,
+                "difficulty": 9.50240284,
+                "elapsed_days": 2,
+                "scheduled_days": 0,
+                "reps": 6,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1793262180000
+              },
+              "2": {
+                "due": 1793607780000,
+                "stability": 2.10690263,
+                "difficulty": 9.01008776,
+                "elapsed_days": 2,
+                "scheduled_days": 4,
+                "reps": 6,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793262180000
+              },
+              "3": {
+                "due": 1793780580000,
+                "stability": 2.91705445,
+                "difficulty": 8.51777267,
+                "elapsed_days": 2,
+                "scheduled_days": 6,
+                "reps": 6,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793262180000
+              },
+              "4": {
+                "due": 1794039780000,
+                "stability": 4.69121783,
+                "difficulty": 8.02545759,
+                "elapsed_days": 2,
+                "scheduled_days": 9,
+                "reps": 6,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793262180000
+              }
+            },
+            "card": {
+              "due": 1793780580000,
+              "stability": 2.91705445,
+              "difficulty": 8.51777267,
+              "elapsed_days": 2,
+              "scheduled_days": 6,
+              "reps": 6,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793262180000
+            },
+            "recallBefore": 0.83514132
+          }
+        ],
+        "recallLater": [
+          {
+            "at": 1793866980000,
+            "value": 0.82982738
+          },
+          {
+            "at": 1794385380000,
+            "value": 0.77170425
+          },
+          {
+            "at": 1796372580000,
+            "value": 0.67254845
+          }
+        ],
+        "schedulerVersion": "ts-fsrs@5.4.2; FSRS-6",
+        "parameters": {
+          "request_retention": 0.85,
+          "maximum_interval": 36500,
+          "w": [
+            0.212,
+            1.2931,
+            2.3065,
+            8.2956,
+            6.4133,
+            0.8334,
+            3.0194,
+            0.001,
+            1.8722,
+            0.1666,
+            0.796,
+            1.4835,
+            0.0614,
+            0.2629,
+            1.6483,
+            0.6014,
+            1.8729,
+            0.5425,
+            0.0912,
+            0.0658,
+            0.1542
+          ],
+          "enable_fuzz": false,
+          "enable_short_term": true,
+          "learning_steps": [
+            "1m",
+            "10m"
+          ],
+          "relearning_steps": [
+            "10m"
+          ]
+        }
+      }
+    },
+    {
+      "name": "easy start",
+      "input": {
+        "retention": 0.95,
+        "start": 1793088000000,
+        "startCard": {
+          "due": 1793088000000,
+          "stability": 0,
+          "difficulty": 0,
+          "elapsed_days": 0,
+          "scheduled_days": 0,
+          "reps": 0,
+          "lapses": 0,
+          "learning_steps": 0,
+          "state": 0
+        },
+        "ratings": [
+          4,
+          4,
+          3,
+          2
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "at": 1793088000000,
+            "rating": 4,
+            "previews": {
+              "1": {
+                "due": 1793088060000,
+                "stability": 0.212,
+                "difficulty": 6.4133,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "2": {
+                "due": 1793088360000,
+                "stability": 1.2931,
+                "difficulty": 5.11217071,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "3": {
+                "due": 1793088600000,
+                "stability": 2.3065,
+                "difficulty": 2.11810397,
+                "elapsed_days": 0,
+                "scheduled_days": 0,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 1,
+                "state": 1,
+                "last_review": 1793088000000
+              },
+              "4": {
+                "due": 1793347200000,
+                "stability": 8.2956,
+                "difficulty": 1,
+                "elapsed_days": 0,
+                "scheduled_days": 3,
+                "reps": 1,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793088000000
+              }
+            },
+            "card": {
+              "due": 1793347200000,
+              "stability": 8.2956,
+              "difficulty": 1,
+              "elapsed_days": 0,
+              "scheduled_days": 3,
+              "reps": 1,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793088000000
+            },
+            "recallBefore": null
+          },
+          {
+            "at": 1793347200000,
+            "rating": 4,
+            "previews": {
+              "1": {
+                "due": 1793347800000,
+                "stability": 1.27496388,
+                "difficulty": 7.02698957,
+                "elapsed_days": 3,
+                "scheduled_days": 0,
+                "reps": 2,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1793347200000
+              },
+              "2": {
+                "due": 1793952000000,
+                "stability": 16.7466921,
+                "difficulty": 4.01060897,
+                "elapsed_days": 3,
+                "scheduled_days": 7,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793347200000
+              },
+              "3": {
+                "due": 1794124800000,
+                "stability": 22.34796465,
+                "difficulty": 1,
+                "elapsed_days": 3,
+                "scheduled_days": 9,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793347200000
+              },
+              "4": {
+                "due": 1794556800000,
+                "stability": 34.61427376,
+                "difficulty": 1,
+                "elapsed_days": 3,
+                "scheduled_days": 14,
+                "reps": 2,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1793347200000
+              }
+            },
+            "card": {
+              "due": 1794556800000,
+              "stability": 34.61427376,
+              "difficulty": 1,
+              "elapsed_days": 3,
+              "scheduled_days": 14,
+              "reps": 2,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1793347200000
+            },
+            "recallBefore": 0.95428521
+          },
+          {
+            "at": 1794556800000,
+            "rating": 3,
+            "previews": {
+              "1": {
+                "due": 1794557400000,
+                "stability": 2.5108596,
+                "difficulty": 7.02698957,
+                "elapsed_days": 14,
+                "scheduled_days": 0,
+                "reps": 3,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1794556800000
+              },
+              "2": {
+                "due": 1796803200000,
+                "stability": 65.1878824,
+                "difficulty": 4.01060897,
+                "elapsed_days": 14,
+                "scheduled_days": 26,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1794556800000
+              },
+              "3": {
+                "due": 1797494400000,
+                "stability": 85.45166758,
+                "difficulty": 1,
+                "elapsed_days": 14,
+                "scheduled_days": 34,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1794556800000
+              },
+              "4": {
+                "due": 1799049600000,
+                "stability": 129.82762865,
+                "difficulty": 1,
+                "elapsed_days": 14,
+                "scheduled_days": 52,
+                "reps": 3,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1794556800000
+              }
+            },
+            "card": {
+              "due": 1797494400000,
+              "stability": 85.45166758,
+              "difficulty": 1,
+              "elapsed_days": 14,
+              "scheduled_days": 34,
+              "reps": 3,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1794556800000
+            },
+            "recallBefore": 0.94980463
+          },
+          {
+            "at": 1797494400000,
+            "rating": 2,
+            "previews": {
+              "1": {
+                "due": 1797495000000,
+                "stability": 3.58925041,
+                "difficulty": 7.02698957,
+                "elapsed_days": 34,
+                "scheduled_days": 0,
+                "reps": 4,
+                "lapses": 1,
+                "learning_steps": 0,
+                "state": 3,
+                "last_review": 1797494400000
+              },
+              "2": {
+                "due": 1802678400000,
+                "stability": 149.48527694,
+                "difficulty": 4.01060897,
+                "elapsed_days": 34,
+                "scheduled_days": 60,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1797494400000
+              },
+              "3": {
+                "due": 1804147200000,
+                "stability": 191.92590995,
+                "difficulty": 1,
+                "elapsed_days": 34,
+                "scheduled_days": 77,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1797494400000
+              },
+              "4": {
+                "due": 1807430400000,
+                "stability": 284.86727612,
+                "difficulty": 1,
+                "elapsed_days": 34,
+                "scheduled_days": 115,
+                "reps": 4,
+                "lapses": 0,
+                "learning_steps": 0,
+                "state": 2,
+                "last_review": 1797494400000
+              }
+            },
+            "card": {
+              "due": 1802678400000,
+              "stability": 149.48527694,
+              "difficulty": 4.01060897,
+              "elapsed_days": 34,
+              "scheduled_days": 60,
+              "reps": 4,
+              "lapses": 0,
+              "learning_steps": 0,
+              "state": 2,
+              "last_review": 1797494400000
+            },
+            "recallBefore": 0.9504821
+          }
+        ],
+        "recallLater": [
+          {
+            "at": 1802764800000,
+            "value": 0.94943406
+          },
+          {
+            "at": 1803283200000,
+            "value": 0.94538478
+          },
+          {
+            "at": 1805270400000,
+            "value": 0.93096797
+          }
+        ],
+        "schedulerVersion": "ts-fsrs@5.4.2; FSRS-6",
+        "parameters": {
+          "request_retention": 0.95,
+          "maximum_interval": 36500,
+          "w": [
+            0.212,
+            1.2931,
+            2.3065,
+            8.2956,
+            6.4133,
+            0.8334,
+            3.0194,
+            0.001,
+            1.8722,
+            0.1666,
+            0.796,
+            1.4835,
+            0.0614,
+            0.2629,
+            1.6483,
+            0.6014,
+            1.8729,
+            0.5425,
+            0.0912,
+            0.0658,
+            0.1542
+          ],
+          "enable_fuzz": false,
+          "enable_short_term": true,
+          "learning_steps": [
+            "1m",
+            "10m"
+          ],
+          "relearning_steps": [
+            "10m"
+          ]
+        }
+      }
+    }
+  ]
+}

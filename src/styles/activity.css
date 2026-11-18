@@ -1,0 +1,404 @@
+/* Activity (足迹) and the small stat tiles that import and restore previews use. */
+.stat-card {
+  position: relative;
+  min-width: 0;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--surface-line);
+}
+.stat-card strong {
+  padding-right: 30px;
+  font-size: var(--fs-3xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.stat-card > span:last-child {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.stat-icon {
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.stat-icon svg {
+  width: 15px;
+  height: 15px;
+}
+.mini-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+.mini-stats .stat-card {
+  min-height: 78px;
+  padding: 14px;
+}
+.mini-stats .stat-card strong {
+  font-size: var(--fs-2xl);
+}
+/* Activity page (0.9.3): one column of cards, kept to a readable width on wide screens. */
+.activity {
+  max-width: 760px;
+}
+.activity-card {
+  margin-bottom: 14px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--surface-line);
+}
+.activity-card h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.activity-card h3 small {
+  font-size: var(--fs-2xs);
+  font-weight: 400;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.card-note {
+  margin-top: 10px;
+  font-size: var(--fs-2xs);
+  color: var(--faint);
+}
+.streak-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.streak-number {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: calc(36px * var(--ui-font-scale));
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.streak-number small {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.streak-top p {
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+.streak-top p small {
+  display: block;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.week-dots {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 16px;
+  text-align: center;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.week-dots i {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 4px;
+  border-radius: var(--radius-pill);
+  background: var(--fill-strong);
+}
+.week-dots i.done {
+  background: var(--accent);
+}
+.week-dots i.today {
+  box-shadow:
+    0 0 0 3px var(--bg),
+    0 0 0 5px var(--accent);
+}
+.week-dots .later {
+  opacity: 0.5;
+}
+.week-dots b {
+  color: var(--accent);
+}
+.progress-bar {
+  display: flex;
+  gap: 2px;
+  height: 16px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+}
+.progress-bar span {
+  min-width: 3px;
+}
+.progress-bar .mature,
+.progress-legend i.mature {
+  background: var(--g3);
+}
+.progress-bar .learning,
+.progress-legend i.learning {
+  background: var(--g4);
+}
+.progress-bar .seen,
+.progress-legend i.seen {
+  background: var(--g2);
+}
+.progress-bar .new,
+.progress-legend i.new {
+  background: var(--fill-strong);
+}
+.progress-legend {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.progress-legend i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 3px;
+}
+.progress-legend b,
+.week-compare b {
+  display: block;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.progress-legend b {
+  font-size: var(--fs-lg);
+}
+.week-compare {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.week-compare b {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  line-height: 1.15;
+}
+.week-compare .up {
+  color: var(--g3);
+  font-weight: 600;
+}
+.week-compare .down {
+  color: var(--g2);
+  font-weight: 600;
+}
+.week-compare .flat {
+  color: var(--faint);
+}
+/* Sixteen weeks of days: Monday at the top of each column, this week on the right. */
+.heatmap {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.heat-month {
+  height: 16px;
+  white-space: nowrap;
+  overflow: visible;
+}
+.heat-weekday {
+  align-self: center;
+  line-height: 1;
+}
+.heat-cell {
+  aspect-ratio: 1;
+  min-height: 0;
+  padding: 0;
+  border-radius: 5px;
+  background: var(--fill);
+}
+.heat-cell.l1 {
+  background: var(--heat-1);
+}
+.heat-cell.l2 {
+  background: var(--heat-2);
+}
+.heat-cell.l3 {
+  background: var(--heat-3);
+}
+.heat-cell.later {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.heat-cell.today {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 3.5px var(--accent);
+}
+.heat-cell.picked {
+  outline: 2px solid var(--fg);
+  outline-offset: 1px;
+}
+.heat-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.heat-scale {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.heat-scale i {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  background: var(--fill);
+}
+.heat-scale i.l1 {
+  background: var(--heat-1);
+}
+.heat-scale i.l2 {
+  background: var(--heat-2);
+}
+.heat-scale i.l3 {
+  background: var(--heat-3);
+}
+.forecast {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  align-items: end;
+  text-align: center;
+}
+.forecast-track {
+  height: 86px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.forecast-track span {
+  width: 20px;
+  max-width: 100%;
+  border-radius: 6px 6px 3px 3px;
+  background: var(--fill-strong);
+}
+.forecast-track span.today {
+  background: var(--accent);
+}
+.forecast-track span.zero {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--faint);
+  opacity: 0.6;
+}
+.forecast strong {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--fs-2xs);
+  font-variant-numeric: tabular-nums;
+}
+.forecast small {
+  font-size: 13px;
+  color: var(--muted);
+}
+.history-day {
+  margin: 12px 0 2px;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  color: var(--muted);
+}
+.history-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.history-row:last-child {
+  border-bottom: 0;
+}
+.history-row strong {
+  min-width: 0;
+  font-family: var(--font-word);
+  font-size: var(--fs-lg);
+  font-weight: 400;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.history-row time {
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.history-row > svg {
+  color: var(--faint);
+}
+.history-row.voided {
+  opacity: 0.55;
+}
+.history-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+.history-dot.grade-0 {
+  background: none;
+  box-shadow: inset 0 0 0 2px var(--faint);
+}
+
+@media (max-width: 800px) {
+  .stat-icon {
+    display: none;
+  }
+  .stat-card {
+    min-height: 88px;
+    padding: 16px 14px;
+  }
+  .stat-card strong {
+    padding-right: 0;
+  }
+}
+@media (max-width: 570px) {
+  .mini-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

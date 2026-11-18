@@ -1,0 +1,744 @@
+/* Study: one-row header, the answer card and its rating controls. On phones the page is a
+   one-screen focus mode (bottom of this file). Motion: the card rises from a stack, flips on
+   reveal, the headword inks in, and a drag tints the card and shows a stamp for the grade. */
+.study-page {
+  max-width: 800px;
+  margin: 0 auto;
+  overflow-x: clip;
+  perspective: 1400px;
+}
+
+/* Header: finish · progress · undo · skip, then one status line */
+.study-toolbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 6px;
+}
+.study-toolbar .text-button {
+  flex: none;
+  min-width: 0;
+  white-space: nowrap;
+  font-size: var(--fs-xs);
+}
+.study-progress {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+.study-progress-track {
+  display: block;
+  width: 100%;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--fill-strong);
+  overflow: hidden;
+}
+.study-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.5s var(--ease-out);
+}
+.study-progress-count {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.study-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 4px 0 14px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+/* The card */
+.flashcard {
+  position: relative;
+  max-width: 620px;
+  min-height: 338px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  border: 1px solid var(--surface-line);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.24s var(--ease-out),
+    opacity 0.22s ease,
+    box-shadow 0.3s ease;
+  animation: card-rise 0.55s var(--ease-out) both;
+  animation-timing-function: var(--ease-out);
+  animation-timing-function: var(--spring-soft);
+  will-change: transform;
+}
+/* Cards waiting behind this one show as a stack. */
+.flashcard[data-stack='1'] {
+  box-shadow:
+    var(--shadow-card),
+    0 10px 0 -5px var(--stack-1);
+}
+.flashcard[data-stack='2'] {
+  box-shadow:
+    var(--shadow-card),
+    0 10px 0 -5px var(--stack-1),
+    0 20px 0 -10px var(--stack-2);
+}
+.flashcard.revealed {
+  animation: card-flip var(--reveal-duration) var(--ease-out) both;
+  animation-timing-function: var(--ease-out);
+  animation-timing-function: var(--spring);
+}
+/* After the reveal the drawn letters stay for the rest of the card; the real text keeps its place,
+   transparent, for selection and screen readers (app/ink.ts). */
+.card-center h2[data-inking] {
+  color: transparent;
+}
+.ink-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: ink-clear var(--ink-duration) var(--ease-out) var(--ink-delay) both;
+}
+/* Calibration measures the letters at rest; a redraw after a size change skips the effect. */
+.ink-measuring,
+.ink-measuring .ink-letter,
+.ink-still,
+.ink-still .ink-letter {
+  animation: none !important;
+}
+.ink-letter {
+  position: absolute;
+  /* Each letter keeps its own layer after the effect, so it is never redrawn differently. */
+  will-change: transform;
+  color: var(--fg);
+  line-height: normal;
+  white-space: pre;
+  animation: ink-gather var(--ink-duration) var(--ease-out) var(--ink-delay) both;
+  animation-timing-function: var(--ease-out);
+  animation-timing-function: var(--spring-soft);
+}
+.flashcard[data-revealed='false'],
+.flashcard[data-revealed='true']:not(.zone-enabled) {
+  cursor: pointer;
+}
+.gesture-enabled {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* Drag tint: the grade's color fades in with the distance dragged. */
+.flashcard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--swipe-color, transparent);
+  opacity: var(--swipe-progress, 0);
+  pointer-events: none;
+  transition: opacity 0.08s linear;
+}
+.swipe-grade-1 {
+  --swipe-color: var(--tint-1);
+}
+.swipe-grade-2 {
+  --swipe-color: var(--tint-2);
+}
+.swipe-grade-3 {
+  --swipe-color: var(--tint-3);
+}
+.swipe-grade-4 {
+  --swipe-color: var(--tint-4);
+}
+/* No animation reset here: removing it after a cancelled drag would replay the flip. */
+.card-dragging {
+  transition: none;
+}
+.card-departing {
+  animation: none;
+  pointer-events: none;
+  transition:
+    transform 0.26s cubic-bezier(0.4, 0, 0.7, 1),
+    opacity 0.24s ease;
+}
+
+.card-top {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 20px 22px;
+  pointer-events: none;
+}
+.card-top > *,
+.card-bottom > * {
+  pointer-events: auto;
+}
+.card-top .badge {
+  background: var(--fill);
+}
+.card-number {
+  font-size: var(--fs-2xs);
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.card-center {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 211px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 5px 24px;
+  text-align: center;
+}
+.card-center .eyebrow {
+  font-size: var(--fs-2xs);
+  color: var(--faint);
+}
+.card-center h2 {
+  position: relative;
+  max-width: 100%;
+  /* Ligatures would join letters the reveal effect draws one by one. */
+  font-variant-ligatures: no-common-ligatures;
+  font-family: var(--font-word);
+  font-size: calc(54px * var(--ui-font-scale));
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.card-definition {
+  max-width: 100%;
+  font-size: calc(18px * var(--ui-font-scale));
+  line-height: 1.6;
+  color: var(--fg-2);
+  overflow-wrap: anywhere;
+}
+.card-hint {
+  max-width: 100%;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.first-continue {
+  max-width: 320px;
+  font-size: var(--fs-md);
+  line-height: 1.7;
+}
+.card-warning {
+  display: -webkit-box;
+  max-width: 100%;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--warn);
+}
+.card-bottom {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  pointer-events: none;
+}
+.card-speech {
+  flex: 1 1 175px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-bottom-note {
+  flex: 1 1 175px;
+  min-width: 0;
+  max-width: 330px;
+  margin-left: auto;
+  font-size: var(--fs-2xs);
+  line-height: 1.6;
+  color: var(--faint);
+  overflow-wrap: anywhere;
+}
+.card-issue-button {
+  position: relative;
+  z-index: 4;
+  margin-left: auto;
+  gap: 6px;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.card-detail-button {
+  position: relative;
+  z-index: 4;
+  flex: 0 1 auto;
+  min-width: 132px;
+  max-width: 100%;
+  min-height: 52px;
+  padding: 12px 20px;
+  font-size: var(--fs-lg);
+  white-space: normal;
+}
+.card-detail-button.emphasis {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Stamp shown while dragging: the grade it will give, and whether letting go confirms it. */
+.drag-label {
+  position: absolute;
+  z-index: 5;
+  top: 34%;
+  left: 50%;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 18px;
+  border: 3px solid currentColor;
+  border-radius: 12px;
+  background: var(--surface-strong);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: normal;
+  transform: translate(-50%, -50%) rotate(-10deg);
+  animation: stamp-in 0.35s var(--ease-out) both;
+  animation-timing-function: var(--ease-out);
+  animation-timing-function: var(--spring);
+  pointer-events: none;
+}
+.drag-label small {
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Four equal cardinal cells of a 3×3 answer grid. Corners and center stay neutral. */
+.zone-enabled .card-center {
+  min-height: 320px;
+  padding: 65px 18%;
+}
+.zone-enabled .card-center h2 {
+  font-size: calc(43px * var(--ui-font-scale));
+}
+.card-zone {
+  position: absolute;
+  z-index: 2;
+  width: 33.333333%;
+  height: 33.333333%;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border: 1px dashed var(--line);
+  background: transparent;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  touch-action: none;
+}
+.card-zone span,
+.card-zone small {
+  max-width: 100px;
+  pointer-events: none;
+}
+.card-zone small {
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.card-zone:hover:not(:disabled),
+.card-zone:focus-visible {
+  background: var(--fill);
+}
+.card-zone-left {
+  left: 0;
+  top: 33.333333%;
+  align-items: flex-start;
+}
+.card-zone-right {
+  left: 66.666666%;
+  top: 33.333333%;
+  align-items: flex-end;
+}
+.card-zone-up {
+  left: 33.333333%;
+  top: 0;
+  justify-content: flex-start;
+  padding-top: 20px;
+}
+.card-zone-down {
+  left: 33.333333%;
+  top: 66.666666%;
+  justify-content: flex-start;
+  padding-top: 15px;
+}
+
+/* Below the card */
+.study-controls {
+  max-width: 620px;
+  margin: 22px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.reveal-button {
+  width: 220px;
+}
+.control-hint {
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--muted);
+}
+.rating-buttons {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.rating-button {
+  min-width: 0;
+  min-height: 56px;
+  padding: 12px 8px 10px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  transition: transform 0.3s var(--ease-out);
+}
+.rating-button > span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.rating-button small {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--fs-xs);
+  opacity: 0.75;
+  overflow-wrap: anywhere;
+}
+.rating-button.grade-1 {
+  background: var(--g1-soft);
+}
+.rating-button.grade-2 {
+  background: var(--g2-soft);
+}
+.rating-button.grade-3 {
+  background: var(--g3-soft);
+}
+.rating-button.grade-4 {
+  background: var(--g4-soft);
+}
+.swipe-guide {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  font-size: var(--fs-md);
+  font-weight: 500;
+  line-height: 1.8;
+}
+.swipe-guide span {
+  white-space: nowrap;
+}
+.gesture-help,
+.skip-hint {
+  font-size: var(--fs-2xs);
+  color: var(--faint);
+}
+.skip-button {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.skip-hint {
+  margin-top: -8px;
+}
+
+@media (max-width: 760px) {
+  .rating-button {
+    min-height: 62px;
+  }
+}
+@media (max-width: 570px) {
+  .flashcard {
+    min-height: 337px;
+    border-radius: var(--radius-lg);
+  }
+  .card-top {
+    padding: 18px 20px;
+  }
+  .card-center {
+    padding: 10px 20px;
+  }
+  .card-center h2 {
+    font-size: clamp(36px, calc(43px * var(--ui-font-scale)), 72px);
+  }
+  .card-center h2.long-title {
+    font-size: clamp(30px, calc(30px * var(--ui-font-scale)), 48px);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .card-definition {
+    font-size: calc(17px * var(--ui-font-scale));
+  }
+  .card-bottom {
+    gap: 10px;
+    padding: 16px 20px;
+  }
+  .card-speech {
+    flex-basis: 100%;
+  }
+  .card-bottom-note {
+    margin-left: 0;
+    text-align: left;
+  }
+  .card-bottom > .card-detail-button {
+    width: 100%;
+    justify-content: center;
+  }
+  .rating-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rating-button {
+    padding: 12px 10px;
+  }
+  .rating-button > span {
+    font-size: var(--fs-sm);
+    gap: 3px;
+  }
+  .swipe-guide {
+    font-size: var(--fs-sm);
+    gap: 8px 12px;
+  }
+  /* The small-screen grid uses edge arrows and a readable legend, leaving room for answers. */
+  .zone-enabled .card-center {
+    min-height: 360px;
+    padding: 24px 44px 90px;
+  }
+  .zone-enabled .card-center h2 {
+    font-size: clamp(28px, calc(28px * var(--ui-font-scale)), 48px);
+  }
+  .zone-enabled .card-center h2.long-title {
+    font-size: clamp(28px, calc(26px * var(--ui-font-scale)), 40px);
+  }
+  .zone-enabled .card-definition {
+    font-size: calc(14px * var(--ui-font-scale));
+  }
+  .zone-enabled .card-top .badge {
+    max-width: calc(33.333333% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: min(16px, var(--fs-xs));
+  }
+  .card-zone {
+    gap: 0;
+  }
+  .card-zone .zone-arrow {
+    max-width: none;
+    font-size: 26px;
+    line-height: 1;
+  }
+  .card-zone .zone-grade,
+  .card-zone small {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .card-zone-left {
+    align-items: flex-start;
+    padding-left: 10px;
+  }
+  .card-zone-right {
+    align-items: flex-end;
+    padding-right: 10px;
+  }
+  .card-zone-up {
+    padding-top: 20px;
+  }
+  .card-zone-down {
+    justify-content: flex-end;
+    padding-bottom: calc(130px + 32px * var(--ui-font-scale));
+  }
+}
+
+/* Focus mode on phones: no tab bar, top bar or footer and nothing to scroll. The card fills the
+   screen; a long answer fades out at the bottom and is read in full from the details sheet, so
+   dragging on the card is always a rating gesture and never a page scroll. */
+@media (max-width: 800px) {
+  html:has(.app-shell[data-view='study']) {
+    overscroll-behavior: none;
+  }
+  .app-shell[data-view='study'] .mobile-nav,
+  .app-shell[data-view='study'] .topbar {
+    display: none;
+  }
+  .app-shell[data-view='study'] main {
+    padding: calc(10px + env(safe-area-inset-top)) 16px calc(10px + env(safe-area-inset-bottom));
+  }
+  .app-shell[data-view='study'] .study-page {
+    height: calc(100dvh - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .app-shell[data-view='study'] .study-page > .flashcard {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    margin-bottom: 14px;
+  }
+  .app-shell[data-view='study'] .card-center {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .app-shell[data-view='study'] .card-overflowing .card-center {
+    justify-content: flex-start;
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent);
+  }
+  .app-shell[data-view='study'] .study-controls {
+    flex: none;
+    margin: 0 auto;
+    padding-top: 6px;
+  }
+  .app-shell[data-view='study'] .gesture-help,
+  .app-shell[data-view='study'] .skip-hint {
+    display: none;
+  } /* In the iOS app the clipping box reaches the screen edges, so a card being dragged or flying away
+     passes under the camera column instead of vanishing at the safe-area line; the card at rest
+     and every control stay inside the safe area. */
+  html[data-native-chrome] .app-shell[data-view='study'] .study-page {
+    margin-left: calc(-16px - var(--sa-l));
+    margin-right: calc(-16px - var(--sa-r));
+    padding-left: calc(16px + var(--sa-l));
+    padding-right: calc(16px + var(--sa-r));
+  }
+}
+
+/* Short phone screens (iPhone Duo outer screen, SE size): the one-screen card leaves little height
+   for the answer, so the card chrome and the hint line give way and the headword scales with the
+   screen height. The speaker and the issue button share one row above the details button. */
+@media (max-width: 800px) and (max-height: 760px) {
+  .app-shell[data-view='study'] .study-meta {
+    margin-bottom: 8px;
+  }
+  .app-shell[data-view='study'] .card-top {
+    padding: 12px 18px;
+  }
+  .app-shell[data-view='study'] .card-bottom {
+    gap: 8px 10px;
+    padding: 12px 18px;
+  }
+  .app-shell[data-view='study'] .card-speech {
+    flex: 0 0 auto;
+  }
+  .app-shell[data-view='study'] .card-center {
+    gap: 8px;
+    padding: 4px 20px;
+  }
+  .app-shell[data-view='study'] .card-center h2 {
+    font-size: clamp(30px, 7.5dvh, 56px);
+  }
+  .app-shell[data-view='study'] .card-center h2.long-title {
+    font-size: clamp(26px, 5.5dvh, 40px);
+  }
+  .app-shell[data-view='study'] .card-definition {
+    font-size: calc(15px * var(--ui-font-scale));
+    line-height: 1.5;
+  }
+  .app-shell[data-view='study'] .zone-enabled .card-center {
+    padding: 16px 44px 70px;
+  }
+  .app-shell[data-view='study'] .zone-enabled .card-center h2 {
+    font-size: clamp(26px, 5.5dvh, 40px);
+  }
+  .app-shell[data-view='study'] .control-hint {
+    display: none;
+  }
+}
+
+/* Width changes: the page blurs and a veil of the app's green glow covers the screen until the
+   width settles, then both clear (Study.tsx). The veil reuses the background's gradient. */
+.study-page {
+  transition: filter var(--veil-out) var(--ease-out);
+}
+.study-page[data-relayout] {
+  filter: blur(var(--relayout-blur));
+  transition-duration: var(--veil-in);
+}
+.relayout-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(120% 55% at 12% -5%, var(--glow-1), transparent 62%),
+    radial-gradient(90% 45% at 100% 75%, var(--glow-2), transparent 65%),
+    linear-gradient(var(--bg), var(--bg-2));
+  transition: opacity var(--veil-out) var(--ease-out);
+}
+.relayout-veil[data-active] {
+  opacity: var(--veil-opacity);
+  transition-duration: var(--veil-in);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .relayout-veil[data-active] {
+    opacity: 1;
+  }
+}
+
+/* In the iOS app the finish, undo and skip buttons and the progress live in the system's side column
+   (app/nativeChrome.ts, NativeShell.swift); the status line carries the count instead. */
+.study-meta-count {
+  display: none;
+}
+html[data-native-chrome] .study-toolbar {
+  display: none;
+}
+html[data-native-chrome] .study-meta-count {
+  display: inline;
+}

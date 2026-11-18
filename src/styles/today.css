@@ -1,0 +1,117 @@
+/* Today: large title, one slogan, and a glass hero card whose big number is what Start does
+   first. Start stays on the first screen of an iPhone at the default text size. */
+.today-heading {
+  margin-bottom: 16px;
+}
+.today-heading h1 {
+  margin: 4px 0 4px;
+}
+.today-heading > .today-slogan {
+  font-size: var(--fs-md);
+  color: var(--fg-2);
+}
+.today-hero {
+  position: relative;
+  max-width: 640px;
+  display: grid;
+  gap: 0;
+  padding: 20px 22px 22px;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  border: 1px solid var(--surface-line);
+  box-shadow: var(--shadow-card);
+}
+.today-hero .hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+.hero-figure {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+}
+.hero-figure strong {
+  font-size: var(--fs-hero);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--fg);
+}
+.hero-figure > span {
+  font-size: var(--fs-lg);
+  color: var(--fg-2);
+}
+.hero-done strong {
+  font-size: var(--fs-2xl);
+  letter-spacing: -0.01em;
+}
+.hero-done > span {
+  flex-basis: 100%;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.today-hero > .hero-sub {
+  margin-top: 6px;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.hero-controls {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 16px;
+}
+.scope-label {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.scope-label select {
+  width: auto;
+  min-width: 0;
+  max-width: 62%;
+  min-height: 40px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  border-color: transparent;
+  font-size: var(--fs-sm);
+}
+.today-hero > .primary-button,
+.today-hero > .secondary-button {
+  width: 100%;
+  min-height: 54px;
+  justify-content: space-between;
+  padding: 12px 22px;
+  font-size: var(--fs-lg);
+}
+.today-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 6px;
+}
+.today-chips span {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--surface-line);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.today-chips strong {
+  font-weight: 650;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 800px) {
+  .today-hero {
+    padding: 18px 18px 20px;
+  }
+}

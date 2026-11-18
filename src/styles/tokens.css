@@ -1,0 +1,207 @@
+/* Design tokens. Direction A "墨绿玻璃" (chosen 2026-10-17): translucent layers over a deep
+   green glow. Every color, radius, type size and easing used by the other style files lives here,
+   so a future skin (see docs/待办与后续计划.md) is mostly a different set of these values. */
+:root {
+  /* Set from Settings by App.tsx: 1.725 × the chosen text size (typography v3). */
+  --ui-font-scale: 1.725;
+
+  /* The device's safe-area insets. On iPhone Duo the closed display reserves a column on the right
+     for the camera, the status bar and the system bars; foreground content stays clear of every
+     edge it reports, and each edge is read separately (Split View can move the column to the left). */
+  --sa-t: env(safe-area-inset-top, 0px);
+  --sa-r: env(safe-area-inset-right, 0px);
+  --sa-b: env(safe-area-inset-bottom, 0px);
+  --sa-l: env(safe-area-inset-left, 0px);
+
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  /* French headwords keep a serif voice: New York on Apple devices. */
+  --font-word: ui-serif, 'New York', 'Iowan Old Style', Georgia, 'Songti SC', serif;
+
+  /* Type scale, in the units the app has always used (× --ui-font-scale). At the default
+     100% these are about 15, 16, 18, 20, 22, 24, 29, 36, 45, 52 and 79 CSS px. */
+  --fs-2xs: calc(8.5px * var(--ui-font-scale));
+  --fs-xs: calc(9.5px * var(--ui-font-scale));
+  --fs-sm: calc(10.5px * var(--ui-font-scale));
+  --fs-md: calc(11.5px * var(--ui-font-scale));
+  --fs-base: calc(12.5px * var(--ui-font-scale));
+  --fs-lg: calc(14px * var(--ui-font-scale));
+  --fs-xl: calc(17px * var(--ui-font-scale));
+  --fs-2xl: calc(21px * var(--ui-font-scale));
+  --fs-3xl: calc(26px * var(--ui-font-scale));
+  --fs-title: calc(30px * var(--ui-font-scale));
+  --fs-hero: calc(46px * var(--ui-font-scale));
+
+  /* Reveal: the card turns over in --reveal-duration; the headword starts --ink-delay later and
+     ends with it, so both finish together. Each keeps its own easing curve. */
+  --reveal-duration: 1s;
+  --ink-delay: 0.18s;
+  --ink-duration: calc(var(--reveal-duration) - var(--ink-delay));
+  /* While the window width changes, the study page blurs under a green veil. */
+  --relayout-blur: 10px;
+  --veil-in: 0.15s;
+  --veil-out: 0.25s;
+  --veil-opacity: 0.4;
+
+  --radius-sm: 10px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* A bouncy spring and a settled one, as CSS linear() curves (fallbacks precede them). */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --spring: linear(
+    0,
+    0.012,
+    0.048 2.2%,
+    0.19 4.8%,
+    0.42 8.2%,
+    0.86 15%,
+    1.02 18.6%,
+    1.1 22%,
+    1.13 25.6%,
+    1.12 29%,
+    1.06 35.4%,
+    1.01 42%,
+    0.99 49%,
+    0.985 55%,
+    1.002 72%,
+    1
+  );
+  --spring-soft: linear(
+    0,
+    0.03,
+    0.12 3.6%,
+    0.42 9.6%,
+    0.8 17%,
+    0.97 23%,
+    1.03 29%,
+    1.035 34%,
+    1.01 46%,
+    0.998 62%,
+    1
+  );
+
+  /* Light palette */
+  color-scheme: light;
+  --bg: #e3efe5;
+  --bg-2: #cfe3d4;
+  --glow-1: #a9d8b2;
+  --glow-2: #c3e3c9;
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-strong: rgba(255, 255, 255, 0.84);
+  --surface-line: rgba(255, 255, 255, 0.9);
+  --chrome: rgba(240, 248, 242, 0.72);
+  --fill: rgba(23, 51, 35, 0.06);
+  --fill-strong: rgba(23, 51, 35, 0.1);
+  --fg: #173323;
+  --fg-2: #33503f;
+  --muted: #5b7564;
+  --faint: #86a08f;
+  --line: rgba(23, 51, 35, 0.11);
+  --accent: #2f6b4a;
+  --accent-hover: #275c3f;
+  --on-accent: #ffffff;
+  --accent-soft: rgba(47, 107, 74, 0.12);
+  --focus: #2f6b4a;
+  --warn: #8d6418;
+  --warn-soft: rgba(217, 154, 43, 0.15);
+  --g1: #b4473c;
+  --g2: #8d6418;
+  --g3: #2f7a4a;
+  --g4: #2c6b96;
+  --g1-soft: rgba(217, 83, 79, 0.13);
+  --g2-soft: rgba(217, 154, 43, 0.16);
+  --g3-soft: rgba(63, 154, 92, 0.14);
+  --g4-soft: rgba(59, 130, 196, 0.13);
+  --tint-1: #f2b8b0;
+  --tint-2: #f2d79a;
+  --tint-3: #b5dcbf;
+  --tint-4: #b3d6ee;
+  --heat-1: #c6e3c4;
+  --heat-2: #8fc58f;
+  --heat-3: #4f9a62;
+  --on-heat-3: #ffffff;
+  --backdrop: rgba(12, 30, 19, 0.3);
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 12px 36px rgba(23, 51, 35, 0.12);
+  --shadow-float: 0 12px 40px rgba(23, 51, 35, 0.18);
+  --stack-1: rgba(255, 255, 255, 0.5);
+  --stack-2: rgba(255, 255, 255, 0.32);
+  /* Opaque list rows, so swipe actions behind a row never show through it. */
+  --row: #f6fbf7;
+  --swipe-1: #c98a1c;
+  --swipe-2: #5f7f95;
+  --swipe-3: #7c8a80;
+  --on-swipe: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0d1a12;
+    --bg-2: #13281b;
+    --glow-1: #23583a;
+    --glow-2: #1a432d;
+    --surface: rgba(255, 255, 255, 0.065);
+    --surface-strong: rgba(24, 40, 30, 0.92);
+    --surface-line: rgba(255, 255, 255, 0.12);
+    --chrome: rgba(14, 28, 19, 0.72);
+    --fill: rgba(255, 255, 255, 0.07);
+    --fill-strong: rgba(255, 255, 255, 0.12);
+    --fg: #e3f0dc;
+    --fg-2: #c4d7c1;
+    --muted: #9cb49e;
+    --faint: #6e8a76;
+    --line: rgba(255, 255, 255, 0.09);
+    --accent: #a8d995;
+    --accent-hover: #bde6ad;
+    --on-accent: #0f2417;
+    --accent-soft: rgba(168, 217, 149, 0.14);
+    --focus: #a8d995;
+    --warn: #e2c27d;
+    --warn-soft: rgba(226, 194, 125, 0.12);
+    --g1: #f0a59b;
+    --g2: #e6c77f;
+    --g3: #9fd6ac;
+    --g4: #9ccbea;
+    --g1-soft: rgba(240, 165, 155, 0.14);
+    --g2-soft: rgba(230, 199, 127, 0.14);
+    --g3-soft: rgba(159, 214, 172, 0.14);
+    --g4-soft: rgba(156, 203, 234, 0.14);
+    --tint-1: #7a3c36;
+    --tint-2: #6e5a26;
+    --tint-3: #2f6040;
+    --tint-4: #2d5670;
+    --heat-1: #2c4a33;
+    --heat-2: #3f7550;
+    --heat-3: #7fbf87;
+    --on-heat-3: #0f2417;
+    --backdrop: rgba(0, 0, 0, 0.5);
+    --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 44px rgba(0, 0, 0, 0.34);
+    --shadow-float: 0 14px 44px rgba(0, 0, 0, 0.45);
+    --veil-opacity: 0.5;
+    --stack-1: rgba(255, 255, 255, 0.045);
+    --stack-2: rgba(255, 255, 255, 0.025);
+    --row: #17271d;
+    --swipe-1: #b07a1a;
+    --swipe-2: #4d6a7e;
+    --swipe-3: #55635a;
+    --on-swipe: #f4f8f2;
+  }
+}
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #3f5a48;
+    --faint: #557060;
+    --line: rgba(23, 51, 35, 0.28);
+    --surface: rgba(255, 255, 255, 0.92);
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root {
+    --muted: #c3d6c4;
+    --faint: #a7bea9;
+    --line: rgba(255, 255, 255, 0.24);
+    --surface: rgba(30, 48, 37, 0.96);
+  }
+}

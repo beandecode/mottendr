@@ -1,0 +1,610 @@
+/* Library and dictionary: search toolbar, filters and inset-grouped lists. Rows off screen skip
+   layout and paint (content-visibility), which keeps long lists smooth to scroll. */
+.search-field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  border: 1px solid var(--surface-line);
+  color: var(--faint);
+}
+.search-field input {
+  min-width: 0;
+  padding: 11px 0;
+  border: 0;
+  background: none;
+  outline-offset: 0;
+}
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.filter-tabs button {
+  min-height: 40px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--surface-line);
+}
+.filter-tabs .active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.word-list {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--surface-line);
+}
+/* Library (0.9.1): rows are two lines, word and part of speech with the learning status on
+   the right, the meaning under them. Rows are opaque (--row) so swipe actions stay hidden. */
+.library .page-heading {
+  margin-bottom: 8px;
+}
+.library-counts {
+  font-variant-numeric: tabular-nums;
+}
+.heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-top: calc(10px * var(--ui-font-scale));
+}
+.heading-actions .text-button {
+  min-height: 44px;
+  padding: 0 8px;
+  font-weight: 600;
+}
+.sticky-sentinel {
+  height: 1px;
+}
+/* The search bar stays under the top bar; once stuck it takes the top bar's glass. */
+.sticky-search {
+  position: sticky;
+  top: calc(64px + env(safe-area-inset-top));
+  z-index: 3;
+  margin: 0 -40px;
+  padding: 6px 40px;
+  transition: background-color 0.2s ease;
+}
+.sticky-search.stuck {
+  background: var(--chrome);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+}
+.search-clear {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--fill-strong);
+  color: var(--muted);
+}
+.chip-row {
+  display: flex;
+  gap: 8px;
+  margin: 8px -40px 14px;
+  padding: 2px 40px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chip-row::-webkit-scrollbar {
+  display: none;
+}
+.chip {
+  flex: none;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 15px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--surface-line);
+}
+.chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.scope-chip {
+  position: relative;
+  flex-direction: row;
+  gap: 2px;
+  color: var(--fg-2);
+  cursor: pointer;
+}
+.scope-chip.set {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+/* The native picker sits inside the chip, so the choice opens the system menu. */
+.scope-chip select {
+  width: auto;
+  max-width: 9em;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.scope-study {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 12px 12px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--accent-soft);
+}
+.scope-study p {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-2);
+}
+.scope-study strong {
+  color: var(--fg);
+}
+.scope-study .primary-button {
+  flex-shrink: 0;
+}
+.library-list {
+  background: var(--row);
+}
+.library-item {
+  border-bottom: 1px solid var(--line);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 84px;
+}
+.library-item:last-child {
+  border-bottom: 0;
+}
+.library-row {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 12px;
+  padding: 10px 18px;
+  text-align: left;
+  background: var(--row);
+}
+.selecting .library-row {
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+}
+.row-word {
+  min-width: 0;
+  font-family: var(--font-word);
+  font-size: var(--fs-xl);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.row-word small {
+  margin-left: 8px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-2xs);
+  color: var(--muted);
+}
+.row-meaning {
+  grid-column: 1 / -1;
+  min-width: 0;
+  font-size: var(--fs-md);
+  line-height: 1.45;
+  color: var(--fg-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.selecting .row-meaning {
+  grid-column: 2 / -1;
+}
+.status-tag {
+  align-self: center;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-tag.new {
+  background: var(--fill);
+  color: var(--muted);
+}
+.status-tag.seen {
+  background: var(--fill);
+  color: var(--g4);
+}
+.status-tag.learning {
+  background: var(--g4-soft);
+  color: var(--g4);
+}
+.status-tag.due {
+  background: var(--g2-soft);
+  color: var(--g2);
+}
+.status-tag.mature {
+  background: var(--g3-soft);
+  color: var(--g3);
+}
+.status-tag.paused {
+  background: var(--fill);
+  color: var(--faint);
+}
+.select-mark {
+  width: 26px;
+  height: 26px;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--faint);
+  color: var(--on-accent);
+}
+.select-mark.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+/* Swipe actions sit behind the row and show as it slides left. */
+.swipe-row {
+  position: relative;
+  overflow: hidden;
+}
+.swipe-actions {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+}
+.swipe-actions button {
+  width: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  color: var(--on-swipe);
+}
+.swipe-action-1 {
+  background: var(--swipe-1);
+}
+.swipe-action-2 {
+  background: var(--swipe-2);
+}
+.swipe-action-3 {
+  background: var(--swipe-3);
+}
+.swipe-front {
+  position: relative;
+  background: var(--row);
+  touch-action: pan-y;
+  transition: transform 0.45s var(--spring-soft);
+}
+.swipe-row.open .swipe-front {
+  transform: translateX(calc(-1 * var(--swipe-width)));
+}
+.row-tools {
+  display: none;
+}
+/* With a mouse there is no swipe: the actions appear on hover or keyboard focus. */
+@media (hover: hover) and (pointer: fine) {
+  .row-tools {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    display: flex;
+    gap: 2px;
+    padding-left: 12px;
+    background: var(--row);
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .swipe-front:hover .row-tools,
+  .row-tools:focus-within {
+    opacity: 1;
+  }
+  .swipe-front:hover .library-row {
+    background: var(--fill);
+  }
+}
+.select-bar {
+  position: fixed;
+  left: calc(50% + (var(--sa-l) - var(--sa-r)) / 2);
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 15;
+  width: min(560px, calc(100% - 28px - var(--sa-l) - var(--sa-r)));
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px 8px 22px;
+  transform: translateX(-50%);
+  border-radius: var(--radius-pill);
+  background: var(--chrome);
+  border: 1px solid var(--surface-line);
+  box-shadow: var(--shadow-float);
+  -webkit-backdrop-filter: blur(26px) saturate(1.8);
+  backdrop-filter: blur(26px) saturate(1.8);
+  font-size: var(--fs-sm);
+}
+.select-bar > span {
+  margin-right: auto;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.select-bar button {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Dictionary (0.9.2): rows match the library's; with nothing typed, recent lookups and an A–Z
+   grid; browsing groups the selection by letter under sticky letter headings, with a rail. */
+.dictionary .page-heading {
+  margin-bottom: 8px;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 32px;
+  margin-left: -6px;
+  font-weight: 600;
+}
+.dictionary-result-count {
+  margin: 4px 4px 12px;
+  font-size: var(--fs-2xs);
+}
+.dictionary-row {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  background: var(--row);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 84px;
+}
+.dictionary-row:last-child {
+  border-bottom: 0;
+}
+.dictionary-row:hover {
+  background: var(--fill);
+}
+.dictionary-row > .badge {
+  align-self: center;
+}
+.dictionary-list {
+  background: var(--row);
+}
+.group-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin: 22px 4px 10px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--muted);
+}
+.group-label .text-button {
+  min-height: 0;
+  padding: 0;
+  font-size: var(--fs-xs);
+}
+.group-label > span {
+  font-weight: 400;
+}
+.letter-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+.letter-grid button {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  background: var(--row);
+  border: 1px solid var(--surface-line);
+  font-family: var(--font-word);
+  font-size: var(--fs-lg);
+}
+.letter-grid button.all {
+  grid-column: span 2;
+  aspect-ratio: auto;
+  font-family: var(--font-ui);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  color: var(--accent);
+}
+.letter-group + .letter-group {
+  margin-top: 14px;
+}
+/* Letter headings stick under the top bar and the search bar. */
+.letter-head {
+  position: sticky;
+  top: calc(64px + 66px + env(safe-area-inset-top));
+  z-index: 2;
+  margin-bottom: 8px;
+  padding: 4px 18px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-word);
+  font-size: var(--fs-lg);
+  font-weight: 400;
+  color: var(--accent);
+  background: var(--chrome);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  scroll-margin-top: calc(64px + 66px + env(safe-area-inset-top));
+}
+.letter-rail {
+  position: fixed;
+  right: max(2px, var(--sa-r));
+  top: 50%;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  transform: translateY(-50%);
+  touch-action: none;
+  user-select: none;
+}
+.letter-rail button {
+  width: 22px;
+  min-height: 0;
+  padding: 1px 0;
+  border-radius: var(--radius-pill);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--accent);
+}
+.letter-rail button.on {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.letter-rail button:disabled {
+  color: var(--faint);
+  opacity: 0.5;
+}
+.dictionary-no-meaning {
+  color: var(--faint);
+}
+/* A meaning shown in English because the record has none in the current language. */
+.meaning-fallback {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--fill);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: var(--muted);
+  vertical-align: 0.1em;
+}
+.dictionary-attribution {
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.dictionary-attribution p {
+  margin: 0 0 14px;
+}
+.dictionary-attribution small {
+  display: block;
+  color: var(--muted);
+}
+.dictionary-attribution a {
+  color: var(--accent);
+}
+.add-intro {
+  margin-bottom: 14px;
+}
+.generation-reserved {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+@media (max-width: 1100px) {
+  .sticky-search,
+  .chip-row {
+    margin-left: -28px;
+    margin-right: -28px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+@media (max-width: 800px) {
+  .sticky-search {
+    top: calc(56px + env(safe-area-inset-top));
+  }
+  .letter-head {
+    top: calc(56px + 66px + env(safe-area-inset-top));
+    scroll-margin-top: calc(56px + 66px + env(safe-area-inset-top));
+  }
+  .dictionary .letter-group,
+  .dictionary .letter-group + .auto-load {
+    margin-right: 10px;
+  }
+  .sticky-search,
+  .chip-row {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  /* While selecting, the bar takes the tab bar's place. */
+  .select-bar {
+    bottom: max(14px, env(safe-area-inset-bottom));
+  }
+  body:has(.select-bar) .mobile-nav {
+    display: none;
+  }
+}
+@media (max-width: 570px) {
+  .filter-tabs button {
+    padding: 6px 12px;
+  }
+}
+
+/* The iOS app has no top bar, so the sticky search and letter headings stick to the top edge. */
+html[data-native-chrome] .sticky-search {
+  top: var(--sa-t);
+}
+html[data-native-chrome] .letter-head {
+  top: calc(66px + var(--sa-t));
+  scroll-margin-top: calc(66px + var(--sa-t));
+}
+/* In the iOS app the side inset ends the row, so it stops at the same edge as the search field and the
+   list, and fades out there to show that more filters scroll in. */
+html[data-native-chrome] .chip-row {
+  margin-right: 0;
+  padding-right: 28px;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}

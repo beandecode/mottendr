@@ -1,0 +1,232 @@
+/* Settings as an iOS inset-grouped list: each section is one rounded group, each setting a row
+   with its control on the right, hints as footnotes. */
+.settings-intro {
+  margin: 2px 0 18px;
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.settings-panel section {
+  min-width: 0;
+  margin-bottom: 18px;
+  padding: 2px 16px 12px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--surface-line);
+}
+.settings-panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0 -16px 2px;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.settings-panel h3 svg {
+  color: var(--accent);
+}
+.settings-panel h4 {
+  margin: 16px 0 6px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--muted);
+}
+/* A setting with a menu: label on the left, the menu on the right. */
+.settings-panel section > label {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 54px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-md);
+  color: var(--fg);
+}
+.settings-panel section > label > select {
+  width: auto;
+  max-width: 58%;
+  min-height: 40px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  border-color: transparent;
+  font-size: var(--fs-sm);
+}
+.settings-panel .form-grid {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.settings-panel .form-grid label {
+  color: var(--fg-2);
+}
+.settings-panel .form-grid input {
+  background: var(--fill);
+  border-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+.settings-panel select {
+  max-width: 100%;
+}
+.settings-panel .muted {
+  padding: 8px 0 4px;
+  font-size: var(--fs-xs);
+  line-height: 1.65;
+}
+.settings-panel .button-row {
+  padding: 10px 0 4px;
+}
+.settings-panel .speech-status {
+  padding: 8px 0 0;
+}
+.setting-switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 54px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-md);
+  color: var(--fg);
+  cursor: pointer;
+}
+.setting-switch span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.setting-switch input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 51px;
+  height: 31px;
+  min-height: 31px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--fill-strong);
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.setting-switch input::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.15),
+    0 1px 1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.35s var(--ease-out);
+  transition-timing-function: var(--ease-out), var(--spring);
+}
+.setting-switch input:checked {
+  background: var(--accent);
+}
+.setting-switch input:checked::before {
+  transform: translateX(20px);
+}
+.setting-switch input:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.setting-switch input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* Language: a checked list, as in iOS. */
+.language-options {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.language-options label {
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  min-height: 52px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-md);
+  color: var(--fg);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.language-options label span {
+  min-width: 0;
+}
+.language-options input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  opacity: 0;
+}
+.language-options label:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.language-options .selected {
+  color: var(--accent);
+  font-weight: 600;
+}
+.swipe-settings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+  padding: 6px 0 10px;
+}
+
+/* Content updates to confirm, inside Settings */
+.review-item {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.review-values {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 8px 0;
+}
+.review-values dt {
+  color: var(--muted);
+}
+.review-values dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.backup-text-toggle {
+  display: block;
+  margin: 12px 0;
+}
+
+@media (max-width: 570px) {
+  .settings-panel .form-grid.two {
+    grid-template-columns: 1fr;
+  }
+  .settings-panel .form-grid.two > label:first-child {
+    grid-column: auto;
+  }
+  input,
+  textarea,
+  select {
+    /* 16px or more keeps iOS from zooming into a focused field. */
+    font-size: max(16px, var(--fs-md));
+  }
+}

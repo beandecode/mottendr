@@ -1,0 +1,98 @@
+/* Motion: keyframes and press feedback. Everything moves only transform, opacity or filter, and
+   all of it collapses to an instant change when the system asks for reduced motion. */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+/* A new card rises from the stack behind it. */
+@keyframes card-rise {
+  from {
+    opacity: 0.4;
+    transform: translateY(18px) scale(0.94);
+  }
+}
+/* Revealing swings the answer side in, like turning a card over. */
+@keyframes card-flip {
+  from {
+    transform: rotateY(-85deg) scale(0.96);
+  }
+}
+/* The headword "inks in" (app/ink.ts): its letters, drawn in their final lines, start pushed
+   apart and blurred and gather into place. Only transform, opacity and filter move, so the
+   word's lines never change; letters pushed past the card are clipped by its edge. */
+@keyframes ink-gather {
+  from {
+    transform: translateX(var(--dx, 0));
+  }
+}
+@keyframes ink-clear {
+  from {
+    opacity: 0.2;
+    filter: blur(6px);
+  }
+}
+@keyframes stamp-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-18deg) scale(1.35);
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+  }
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+}
+
+/* Press feedback: a quick squeeze with a spring back. */
+.primary-button:active:not(:disabled),
+.secondary-button:active:not(:disabled),
+.rating-button:active:not(:disabled),
+.round-audio:active:not(:disabled),
+.segmented button:active:not(:disabled),
+.filter-tabs button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.round-audio,
+.segmented button,
+.filter-tabs button {
+  transition: transform 0.3s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .flashcard {
+    will-change: auto;
+  }
+}

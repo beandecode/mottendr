@@ -1,0 +1,94 @@
+/* Adding, importing and restoring entries (shown under the dictionary). */
+.add-panel,
+.import-batches {
+  max-width: 760px;
+}
+.import-batches {
+  margin-top: 24px;
+}
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding: 28px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--fill);
+  text-align: center;
+}
+.upload-area > svg {
+  color: var(--accent);
+}
+.upload-area p {
+  max-width: 430px;
+  font-size: var(--fs-md);
+  line-height: 1.7;
+  color: var(--muted);
+}
+.file-button {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.file-button input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.code-input {
+  margin: 8px 0 12px;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+.import-preview {
+  margin-top: 18px;
+}
+.import-preview .primary-button {
+  margin-top: 18px;
+}
+.import-draft-list {
+  max-height: 350px;
+  overflow: auto;
+}
+.import-editor {
+  padding: 18px 0;
+}
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-md);
+  color: var(--muted);
+}
+.preview-row > span {
+  flex: 1;
+  text-align: left;
+}
+.preview-row > .text-button {
+  flex-shrink: 0;
+}
+.preview-row strong {
+  font-family: var(--font-word);
+  font-size: var(--fs-lg);
+  font-weight: 400;
+  color: var(--fg);
+}
+@media (max-width: 570px) {
+  .content-panel {
+    padding: 18px;
+  }
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .form-grid > label:first-child {
+    grid-column: 1 / -1;
+  }
+  .form-grid.two > label:first-child {
+    grid-column: auto;
+  }
+}
